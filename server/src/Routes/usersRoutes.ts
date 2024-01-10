@@ -6,11 +6,15 @@ import {
   getUser,
   updateUser,
 } from "../Controllers/userController";
-import { isAuthenticated } from "../middlewares/authMiddleware";
+import {
+  isAuthenticated,
+  isOwnerOrAdmin,
+  restricToRoles,
+} from "../middlewares/authMiddleware";
 
 export default (router: express.Router) => {
-  router.get("/users", isAuthenticated, getAllUsers);
+  router.get("/users/", getAllUsers);
   router.get("/users/:id", getUser);
-  router.delete("/users/:id", isAuthenticated, deleteUser);
-  router.patch("/users/:id", isAuthenticated, updateUser);
+  router.delete("/users/:id", isAuthenticated, isOwnerOrAdmin, deleteUser);
+  router.patch("/users/:id", isAuthenticated, isOwnerOrAdmin, updateUser);
 };

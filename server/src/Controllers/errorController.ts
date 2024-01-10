@@ -45,7 +45,6 @@ const sendErrorProduction = (err: any, res: express.Response) => {
       status: err.status,
       message: err.message,
     });
-
     // Programming error or other unknown error: don't leak error details
   } else {
     // 1. Log error
@@ -72,7 +71,6 @@ export default (
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === "production") {
     let error = { ...err, name: err.name };
-    // let error = Object.assign(err);
 
     if (error.name === "CastError") error = handleCastErrorDB(error);
     if (err.code === 11000) error = handleDuplicateFieldsDB(error);

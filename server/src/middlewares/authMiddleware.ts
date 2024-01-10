@@ -10,34 +10,40 @@ interface CustomRequest extends express.Request {
   user?: any;
 }
 
-// export const isOwner = async (
-//   req: express.Request,
-//   res: express.Response,
-//   next: express.NextFunction
-// ) => {
-//   try {
-//     const { id } = req.params;
-//     // const currentUserId = get(req, "identity._id") as string | undefined;
+export const isOwnerOrAdmin = (
+  req: CustomRequest,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const { id } = req.params;
+  const user = req.user;
 
-//     console.log(currentUserId);
+  if (!user.id) {
+    next(new AppError("Not logged in!", 403));
+  }
 
-//     if (!currentUserId) {
-//       return res.status(403).json({ error: "Not logged in" });
-//     }
+  if (user.id !== id && user.role !== "Admin" && user.role !== "Owner") {
+    return next(new AppError("You do not have permission to access this", 403));
+  }
 
-//     if (currentUserId.toString() !== id) {
-//       return res
-//         .status(403)
-//         .json({ error: "You do not have permission to access this" });
-//     }
+  next();
+};
 
-//     next();
-//   } catch (error) {
-//     console.log(error);
+export const restricToRoles = (...roles: string[]) => {
+  return (
+    req: CustomRequest,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    if (!roles.includes(req.user.role)) {
+      next(
+        new AppError("You do not have permission to perform this action!", 403)
+      );
+    }
 
-//     return res.status(400);
-//   }
-// };
+    next();
+  };
+};
 
 export const isAuthenticated = catchAsync(
   async (
@@ -76,8 +82,6 @@ export const isAuthenticated = catchAsync(
       );
     }
 
-    console.log(freshUser);
-
     // 4. Check if user changed password after the token is issued
 
     if ((freshUser as any).changedPasswordAfter(decoded.iat)) {
@@ -91,6 +95,6 @@ export const isAuthenticated = catchAsync(
 
     req.user = freshUser;
 
-    return next();
+    next();
   }
 );
