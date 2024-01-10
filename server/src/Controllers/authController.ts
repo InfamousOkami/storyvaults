@@ -50,8 +50,6 @@ export const login = catchAsync(
       next(new AppError("Incorrect Email, Username or Password", 400));
     }
 
-    await user.save();
-
     const token = signJWT(user._id);
 
     return res

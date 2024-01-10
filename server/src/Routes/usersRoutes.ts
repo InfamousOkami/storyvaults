@@ -11,6 +11,6 @@ import { isAuthenticated } from "../middlewares/authMiddleware";
 export default (router: express.Router) => {
   router.get("/users", isAuthenticated, getAllUsers);
   router.get("/users/:id", getUser);
-  router.delete("/users/:id", deleteUser);
-  router.patch("/users/:id", updateUser);
+  router.delete("/users/:id", isAuthenticated, deleteUser);
+  router.patch("/users/:id", isAuthenticated, updateUser);
 };
