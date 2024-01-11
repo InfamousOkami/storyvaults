@@ -1,10 +1,12 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import { getUserByEmail, getUserByUsername } from "./userController";
-import { UserModel } from "../Models/userModel";
+import { UserI, UserModel } from "../Models/userModel";
 import { Types } from "mongoose";
 import catchAsync from "../utils/catchAsync";
 import AppError from "../utils/appError";
+
+import { CustomRequest } from "../../typings";
 
 const signJWT = (id: string | Types.ObjectId) => {
   return jwt.sign({ id }, process.env.JWT_SECRET!, {
@@ -107,3 +109,33 @@ export const register = catchAsync(
     });
   }
 );
+
+export const forgotPassword = catchAsync(
+  async (
+    req: CustomRequest,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const { email } = req.body;
+
+    // 1. Get user based on email
+    const user: UserI | null | undefined = await UserModel.findOne({ email });
+
+    if (!user) {
+      return next(new AppError("No user connected to that email", 404));
+    }
+
+    // 2. Generate random reset token
+    const token = user.createPasswordResetToken();
+
+    await user.save({ validateBeforeSave: false });
+
+    // 3. Send it to user's email
+  }
+);
+
+export const resetPassword = (
+  req: CustomRequest,
+  res: express.Response,
+  next: express.NextFunction
+) => {};
