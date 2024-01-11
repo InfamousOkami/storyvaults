@@ -2,13 +2,10 @@ import express from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { promisify } from "util";
 
-import { UserModel } from "../Models/userModel";
+import { UserModel, UserI } from "../Models/userModel";
+import { CustomRequest } from "../../typings";
 import AppError from "../utils/appError";
 import catchAsync from "../utils/catchAsync";
-
-interface CustomRequest extends express.Request {
-  user?: any;
-}
 
 export const isOwnerOrAdmin = (
   req: CustomRequest,
@@ -74,7 +71,9 @@ export const isAuthenticated = catchAsync(
     }
 
     // 3. Check if user still exists
-    const freshUser = await UserModel.findById(decoded.id);
+    const freshUser: UserI | null | undefined = await UserModel.findById(
+      decoded.id
+    );
 
     if (!freshUser) {
       return next(
@@ -84,7 +83,7 @@ export const isAuthenticated = catchAsync(
 
     // 4. Check if user changed password after the token is issued
 
-    if ((freshUser as any).changedPasswordAfter(decoded.iat)) {
+    if (freshUser.changedPasswordAfter(decoded.iat)) {
       return next(
         new AppError(
           "User recently changed password! Please log in again.",
