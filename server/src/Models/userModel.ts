@@ -1,6 +1,7 @@
 import mongoose, { Document } from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { Timestamp } from "mongodb";
 
 type externalLinksType =
@@ -13,6 +14,37 @@ type externalLinksType =
 interface externalLinksI {
   type: externalLinksType;
   href: string;
+}
+
+export interface UserI extends Document {
+  username: string;
+  email: string;
+  photo?: string;
+  password: string;
+  passwordConfirm?: string;
+  picturePath: string;
+  bio: string;
+  role: "Reader" | "Writer" | "Editor" | "Admin" | "Owner";
+  followers: string[];
+  following: string[];
+  language: string;
+  externalLinks: externalLinksI[];
+  theme?: "dark" | "light";
+  adultContent: boolean;
+  tosAccepted: boolean;
+  passwordChangedAt?: Date;
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
+  profileViews: number;
+  active: boolean;
+
+  // Methods
+  correctPassword(
+    enteredPassword: string,
+    userPassword: string
+  ): Promise<boolean>;
+  changedPasswordAfter(JWTTimestamp: any): boolean;
+  createPasswordResetToken(): string;
 }
 
 const UserSchema = new mongoose.Schema({
@@ -114,6 +146,21 @@ UserSchema.methods.changedPasswordAfter = function (JWTTimestamp: any) {
     return JWTTimestamp < changedTimestamp;
   }
   return false;
+};
+
+UserSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  this.set(
+    "passwordResetToken",
+    crypto.createHash("sha256").update(resetToken).digest("hex")
+  );
+
+  console.log({ resetToken });
+
+  this.set("passwordResetExpires", Date.now() + 10 * 60 * 1000);
+
+  return resetToken;
 };
 
 export const UserModel = mongoose.model("user", UserSchema);
