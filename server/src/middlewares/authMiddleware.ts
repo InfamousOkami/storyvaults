@@ -48,7 +48,7 @@ export const isAuthenticated = catchAsync(
     next: express.NextFunction
   ) => {
     // 1. Get token and check if its there
-    let token: string | undefined;
+    let token: string = "";
 
     if (
       req.headers.authorization &&
@@ -58,7 +58,7 @@ export const isAuthenticated = catchAsync(
     }
 
     // 2. Verify token
-    const decoded: any = jwt.verify(token!, process.env.JWT_SECRET!);
+    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
 
     if (!decoded) {
       next(new AppError("Invalid token, Please log in again!", 401));
