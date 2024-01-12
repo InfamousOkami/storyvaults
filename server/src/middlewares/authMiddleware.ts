@@ -1,6 +1,5 @@
 import express from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { promisify } from "util";
+import jwt from "jsonwebtoken";
 
 import { UserModel, UserI } from "../Models/userModel";
 import { CustomRequest } from "../../typings";
@@ -49,7 +48,7 @@ export const isAuthenticated = catchAsync(
     next: express.NextFunction
   ) => {
     // 1. Get token and check if its there
-    let token: string = "";
+    let token: string | undefined;
 
     if (
       req.headers.authorization &&
@@ -58,13 +57,8 @@ export const isAuthenticated = catchAsync(
       token = req.headers.authorization.split(" ")[1];
     }
 
-    if (!token) {
-      next(
-        new AppError("You are not logged in! Please login to access this", 404)
-      );
-    }
     // 2. Verify token
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+    const decoded: any = jwt.verify(token!, process.env.JWT_SECRET!);
 
     if (!decoded) {
       next(new AppError("Invalid token, Please log in again!", 401));

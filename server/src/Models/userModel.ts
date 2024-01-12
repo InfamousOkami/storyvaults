@@ -132,6 +132,13 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
+UserSchema.pre("save", function (next) {
+  if (!this.isModified("password") || this.isNew) return next();
+
+  this.set("passwordChangedAt", Date.now() - 1000);
+  next();
+});
+
 UserSchema.methods.correctPassword = async function (
   enteredPassword: string,
   userPassword: string
@@ -156,7 +163,7 @@ UserSchema.methods.createPasswordResetToken = function () {
     crypto.createHash("sha256").update(resetToken).digest("hex")
   );
 
-  console.log({ resetToken });
+  console.log({ resetToken }, this.passwordResetToken);
 
   this.set("passwordResetExpires", Date.now() + 10 * 60 * 1000);
 
