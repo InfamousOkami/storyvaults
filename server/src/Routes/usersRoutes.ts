@@ -4,6 +4,7 @@ import {
   deleteUser,
   getAllUsers,
   getUser,
+  updateMe,
   updateUser,
 } from "../Controllers/userController";
 
@@ -17,5 +18,8 @@ export default (router: express.Router) => {
   router.get("/users/", isAuthenticated, getAllUsers);
   router.get("/users/:id", getUser);
   router.delete("/users/:id", isAuthenticated, isOwnerOrAdmin, deleteUser);
+
+  router.patch("/users/updateMe", isAuthenticated, isOwnerOrAdmin, updateMe);
+
   router.patch("/users/:id", isAuthenticated, isOwnerOrAdmin, updateUser);
 };

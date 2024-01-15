@@ -2,6 +2,17 @@ import express from "express";
 import { UserModel } from "../Models/userModel";
 import catchAsync from "../utils/catchAsync";
 import AppError from "../utils/appError";
+import { CustomRequest } from "../../typings";
+
+const filterObj = (obj: any, ...allowedFields: string[]) => {
+  const newObj: Record<string, any> = {};
+
+  Object.keys(obj).forEach((field) => {
+    if (allowedFields.includes(field)) newObj[field] = obj[field];
+  });
+
+  return newObj;
+};
 
 export const getUserByEmail = (email: string) => {
   return UserModel.findOne({ email }).collation({
@@ -62,23 +73,40 @@ export const getUser = catchAsync(
   }
 );
 
-export const deleteUser = catchAsync(
+// Update User
+export const updateMe = catchAsync(
   async (
-    req: express.Request,
+    req: CustomRequest,
     res: express.Response,
     next: express.NextFunction
   ) => {
-    const { id } = req.params;
-
-    const deletedUser = await UserModel.findByIdAndDelete(id);
-
-    if (!deletedUser) {
-      next(new AppError("No user found with that ID", 404));
+    // 1. Create Error if user tries to change password
+    if (req.body.password || req.body.passwordConfirma) {
+      return next(
+        new AppError(
+          "Cannot change password using this route, Please use /updateMyPassword.",
+          400
+        )
+      );
     }
 
-    return res.json({
+    // 2. Update user document
+    const filteredBody = filterObj(req.body, "email", "username", "bio");
+
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      req.user.id,
+      filteredBody,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    res.status(200).json({
       status: "Success",
-      data: null,
+      data: {
+        user: updatedUser,
+      },
     });
   }
 );
@@ -107,5 +135,27 @@ export const updateUser = catchAsync(
     await user!.save();
 
     return res.status(200).json(user).end();
+  }
+);
+
+// Delete User
+export const deleteUser = catchAsync(
+  async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const { id } = req.params;
+
+    const deletedUser = await UserModel.findByIdAndDelete(id);
+
+    if (!deletedUser) {
+      next(new AppError("No user found with that ID", 404));
+    }
+
+    return res.json({
+      status: "Success",
+      data: null,
+    });
   }
 );
