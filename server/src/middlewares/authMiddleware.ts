@@ -57,11 +57,17 @@ export const isAuthenticated = catchAsync(
       token = req.headers.authorization.split(" ")[1];
     }
 
+    if (token === "" || !token) {
+      return next(
+        new AppError("You are not logged in! Please log in to get access", 400)
+      );
+    }
+
     // 2. Verify token
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
 
     if (!decoded) {
-      next(new AppError("Invalid token, Please log in again!", 401));
+      return next(new AppError("Invalid token, Please log in again!", 401));
     }
 
     // 3. Check if user still exists
