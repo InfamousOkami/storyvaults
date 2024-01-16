@@ -119,6 +119,7 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
+// Middleware
 UserSchema.pre("save", async function (next) {
   // Runs Function if Password is modified
   if (!this.isModified("password")) return next();
@@ -139,6 +140,14 @@ UserSchema.pre("save", function (next) {
   next();
 });
 
+UserSchema.pre(/^find/, function (this: any, next) {
+  // Current query only finds users that are active
+  // this.find({ active: true });
+  console.log(this.find({ active: { $ne: false } }));
+  next();
+});
+
+// Methods/Functions
 UserSchema.methods.correctPassword = async function (
   enteredPassword: string,
   userPassword: string

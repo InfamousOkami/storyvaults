@@ -36,6 +36,7 @@ export const updateUserById = (id: string, values: Record<string, any>) => {
   return UserModel.findByIdAndUpdate(id, values);
 };
 
+// Get Users
 export const getAllUsers = catchAsync(
   async (
     req: express.Request,
