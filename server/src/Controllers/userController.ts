@@ -159,3 +159,42 @@ export const deleteUser = catchAsync(
     });
   }
 );
+
+export const deactivateMe = catchAsync(
+  async (
+    req: CustomRequest,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    console.log("User: ", req.user);
+    const deactivatedUser = await UserModel.findByIdAndUpdate(req.user.id, {
+      active: false,
+    });
+
+    res.status(204).json({
+      status: "Success",
+      data: {
+        user: deactivatedUser,
+      },
+    });
+  }
+);
+
+export const deactivateUser = catchAsync(
+  async (
+    req: CustomRequest,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const deactivatedUser = await UserModel.findByIdAndUpdate(req.params.id, {
+      active: false,
+    });
+
+    res.status(204).json({
+      status: "Success",
+      data: {
+        user: deactivatedUser,
+      },
+    });
+  }
+);
