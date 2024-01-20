@@ -6,11 +6,14 @@ import compression from "compression";
 import cors from "cors";
 import mongoose from "mongoose";
 import morgan from "morgan";
+import ratelimit from "express-rate-limit";
+import helmet from "helmet";
 
 import AppError from "./utils/appError";
 import globalErrorHandler from "./Controllers/errorController";
 
-import router from "./Routes";
+import userRoutes from "./Routes/usersRoutes";
+import authRoutes from "./Routes/authRoutes";
 
 require("dotenv").config();
 
@@ -22,7 +25,24 @@ app.use(
   })
 );
 
-app.use(morgan("dev"));
+// Global Middleware
+// Set security Headers
+app.use(helmet());
+
+// Dev Logging
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
+
+// Limit Request from same Ip
+const limiter = ratelimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: "To many requests from this IP, please try again in an hour!",
+});
+app.use("/api", limiter);
+
+// Body Parser
 app.use(compression());
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -71,7 +91,8 @@ mongoose.connection.on("uncaughtException", (error: Error) => {
 });
 
 // Routes
-app.use("/", router());
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/auth", authRoutes);
 
 // If server cant find route
 app.all("*", (req, res, next) => {

@@ -142,8 +142,8 @@ UserSchema.pre("save", function (next) {
 
 UserSchema.pre(/^find/, function (this: any, next) {
   // Current query only finds users that are active
-  // this.find({ active: true });
-  console.log(this.find({ active: { $ne: false } }));
+  this.find({ active: true });
+
   next();
 });
 

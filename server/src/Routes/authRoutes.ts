@@ -9,17 +9,19 @@ import {
   updatePassword,
 } from "../Controllers/authController";
 
-export default (router: express.Router) => {
-  router.post("/auth/register", register);
-  router.post("/auth/login", login);
+const router = express.Router();
 
-  router.post("/auth/forgotPassword", forgotPassword);
-  router.patch("/auth/resetPassword/:token", resetPassword);
+router.post("/register", register);
+router.post("/login", login);
 
-  router.patch(
-    "/auth/updateMyPassword",
-    isAuthenticated,
-    isOwnerOrAdmin,
-    updatePassword
-  );
-};
+router.post("/forgotPassword", forgotPassword);
+router.patch("/resetPassword/:token", resetPassword);
+
+router.patch(
+  "/updateMyPassword",
+  isAuthenticated,
+  isOwnerOrAdmin,
+  updatePassword
+);
+
+export default router;
