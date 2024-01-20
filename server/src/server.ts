@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 import morgan from "morgan";
 import ratelimit from "express-rate-limit";
 import helmet from "helmet";
+import mongoSanitize from "express-mongo-sanitize";
 
 import AppError from "./utils/appError";
 import globalErrorHandler from "./Controllers/errorController";
@@ -41,6 +42,9 @@ const limiter = ratelimit({
   message: "To many requests from this IP, please try again in an hour!",
 });
 app.use("/api", limiter);
+
+// Data sanitization, Removes $ and .'s, Stops noSQL injections
+app.use(mongoSanitize());
 
 // Body Parser
 app.use(compression());
