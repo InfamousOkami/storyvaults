@@ -49,6 +49,10 @@ export const getAllUsers = catchAsync(
       status: "Success",
       results: users.length,
       data: users,
+      pagination: {
+        total: users.length,
+        pages: Math.ceil(users.length / 25),
+      },
     });
   }
 );
