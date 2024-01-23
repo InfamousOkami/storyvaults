@@ -88,11 +88,11 @@ const StorySchema = new mongoose.Schema({
     max: 5,
     set: (val: number) => Math.round(val * 10) / 10,
   },
-  // language: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "LanguagesModel",
-  //   required: [true, "You must select a language for your story"],
-  // },
+  language: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "LanguageModel",
+    required: [true, "You must select a language for your story"],
+  },
   // genre: {
   //   type: mongoose.Schema.Types.ObjectId,
   //   required: [true, "You must provide a genre"],
