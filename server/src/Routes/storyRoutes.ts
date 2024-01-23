@@ -19,7 +19,7 @@ router.get("/:id", getStory);
 
 // Create
 router.post(
-  "/story/new",
+  "/new",
   isAuthenticated,
   restricToRoles("Writer", "Editor", "Admin", "Owner"),
   createStory

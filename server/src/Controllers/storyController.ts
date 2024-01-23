@@ -31,7 +31,7 @@ export const getStory = catchAsync(
     res: express.Response,
     next: express.NextFunction
   ) => {
-    const story = await StoryModel.findById(req.params.id);
+    const story = await StoryModel.findById(req.params.id).populate("category");
 
     if (!story) {
       next(new AppError("No story found with that ID", 404));
