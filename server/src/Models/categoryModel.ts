@@ -3,7 +3,7 @@ import mongoose, { Document } from "mongoose";
 export interface CategoryI extends Document {
   name: string;
   description?: string;
-  storyAmount?: number;
+  storyAmount: number;
 }
 
 const CategorySchema = new mongoose.Schema({
