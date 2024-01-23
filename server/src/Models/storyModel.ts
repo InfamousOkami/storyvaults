@@ -55,11 +55,11 @@ const StorySchema = new mongoose.Schema({
     default: 0,
   },
   slug: String,
-  // category: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: "CategoryModel",
-  //   required: [true, "You must select a category"],
-  // },
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "CategoryModel",
+    required: [true, "You must select a category"],
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "UserModel",
