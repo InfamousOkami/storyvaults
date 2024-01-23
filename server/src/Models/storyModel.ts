@@ -10,23 +10,23 @@ export interface StoryI extends Document {
   description: string;
   active: boolean;
   readerAccess: readerAccessT;
-  price?: number;
-  slug?: string;
+  price: number;
+  slug: string;
   category: mongoose.Schema.Types.ObjectId;
   userId: mongoose.Schema.Types.ObjectId;
   editorId?: mongoose.Schema.Types.ObjectId;
-  editorRequestStatus?: editorRequestT;
+  editorRequestStatus: editorRequestT;
   picturePath?: string;
   status: statusT;
-  ratingsAverage?: number;
+  ratingsAverage: number;
   language: mongoose.Schema.Types.ObjectId;
   genre: mongoose.Schema.Types.ObjectId;
-  chapterAmount?: number;
-  wordAmount?: number;
-  commentAmount?: number;
-  bookmarkAmount?: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+  chapterAmount: number;
+  wordAmount: number;
+  commentAmount: number;
+  bookmarkAmount: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const StorySchema = new mongoose.Schema({
