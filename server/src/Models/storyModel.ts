@@ -8,6 +8,7 @@ type statusT = "Complete" | "Incomplete";
 export interface StoryI extends Document {
   title: string;
   description: string;
+  active: boolean;
   readerAccess: readerAccessT;
   price?: number;
   slug?: string;
@@ -39,10 +40,14 @@ const StorySchema = new mongoose.Schema({
     type: String,
     required: [true, "Your story must have a description"],
   },
+  active: {
+    type: Boolean,
+    required: [true, "Your story must be set to active or deactive"],
+  },
   readerAccess: {
     type: String,
     enum: ["free", "payFull", "payByChapter"],
-    required: [true, "Your select what access the readers will have"],
+    required: [true, "You need to select what access the readers will have"],
     defrault: "free",
   },
   price: {
@@ -50,11 +55,11 @@ const StorySchema = new mongoose.Schema({
     default: 0,
   },
   slug: String,
-  category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "CategoryModel",
-    required: [true, "You must select a category"],
-  },
+  // category: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "CategoryModel",
+  //   required: [true, "You must select a category"],
+  // },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "UserModel",
@@ -83,16 +88,16 @@ const StorySchema = new mongoose.Schema({
     max: 5,
     set: (val: number) => Math.round(val * 10) / 10,
   },
-  language: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "LanguagesModel",
-    required: [true, "You must select a language for your story"],
-  },
-  genre: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: [true, "You must provide a genre"],
-    ref: "GenresModel",
-  },
+  // language: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "LanguagesModel",
+  //   required: [true, "You must select a language for your story"],
+  // },
+  // genre: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   required: [true, "You must provide a genre"],
+  //   ref: "GenresModel",
+  // },
   chapterAmount: {
     type: Number,
     default: 0,
