@@ -15,6 +15,7 @@ import globalErrorHandler from "./Controllers/errorController";
 
 import userRoutes from "./Routes/usersRoutes";
 import authRoutes from "./Routes/authRoutes";
+import storyRoutes from "./Routes/storyRoutes";
 
 require("dotenv").config();
 
@@ -97,6 +98,7 @@ mongoose.connection.on("uncaughtException", (error: Error) => {
 // Routes
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/stories", storyRoutes);
 
 // If server cant find route
 app.all("*", (req, res, next) => {
