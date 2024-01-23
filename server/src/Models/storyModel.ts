@@ -93,11 +93,11 @@ const StorySchema = new mongoose.Schema({
     ref: "LanguageModel",
     required: [true, "You must select a language for your story"],
   },
-  // genre: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   required: [true, "You must provide a genre"],
-  //   ref: "GenresModel",
-  // },
+  genre: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: [true, "You must provide a genre"],
+    ref: "GenreModel",
+  },
   chapterAmount: {
     type: Number,
     default: 0,
