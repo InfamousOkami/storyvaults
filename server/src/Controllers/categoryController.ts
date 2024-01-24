@@ -85,7 +85,7 @@ export const updateCategory = catchAsync(
 
     const updatedCategory = await CategoryModel.findByIdAndUpdate(
       id,
-      { ...req.body, storyAmount: category?.storyAmount },
+      { ...req.body },
       {
         new: true,
         runValidators: true,

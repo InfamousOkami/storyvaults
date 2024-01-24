@@ -85,7 +85,7 @@ export const updateLanguage = catchAsync(
 
     const updatedLanguage = await LanguageModel.findByIdAndUpdate(
       id,
-      { ...req.body, storyAmount: language?.storyAmount },
+      { ...req.body },
       {
         new: true,
         runValidators: true,
