@@ -11,9 +11,9 @@ export const getAllStories = catchAsync(
     res: express.Response,
     next: express.NextFunction
   ) => {
-    const stories = await StoryModel.find().populate(
-      `languageName genre userId`
-    );
+    const stories = await StoryModel.find()
+      .populate(`languageName genre userId`)
+      .sort({ createdAt: 1 });
 
     return res.status(200).json({
       status: "Success",
