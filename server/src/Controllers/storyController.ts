@@ -37,6 +37,8 @@ export const getStory = catchAsync(
 
     let storyQuery = StoryModel.findById(req.params.id);
 
+    console.log(storyQuery);
+
     // Check if editorId exists in the request params
     if (story?.editorId) {
       populateFields += " editorId";
