@@ -3,6 +3,9 @@ import StoryModel, { StoryI } from "../Models/storyModel";
 import catchAsync from "../utils/catchAsync";
 import AppError from "../utils/appError";
 import { CustomRequest } from "../../typings";
+import CategoryModel from "../Models/categoryModel";
+import LanguageModel from "../Models/languageModel";
+import GenreModel from "../Models/genreModel";
 
 // Get Stories
 export const getAllStories = catchAsync(
@@ -75,6 +78,42 @@ export const createStory = catchAsync(
       userId: req.user.id,
     });
 
+    const category = await CategoryModel.findById(newStory.category);
+    const categoryName = category?.name;
+
+    if (category) {
+      await CategoryModel.findByIdAndUpdate(newStory.category, {
+        storyAmount: category.storyAmount + 1,
+      });
+    } else {
+      next(new AppError("No category with this id", 400));
+    }
+
+    const language = await LanguageModel.findById(newStory.languageName);
+
+    if (language) {
+      await LanguageModel.findByIdAndUpdate(newStory.languageName, {
+        storyAmount: language.storyAmount + 1,
+      });
+    } else {
+      next(new AppError("No language with this id", 400));
+    }
+
+    const genre = await GenreModel.findById(newStory.genre);
+
+    if (genre) {
+      const updateQuery = {
+        $inc: {
+          [`storyAmount.${categoryName}`]: 1,
+          "storyAmount.total": 1,
+        },
+      };
+
+      await GenreModel.findByIdAndUpdate(newStory.genre, updateQuery);
+    } else {
+      next(new AppError("No genre with this id", 400));
+    }
+
     res.status(200).json({
       status: "Success",
       data: {
@@ -94,6 +133,8 @@ export const updateStory = catchAsync(
     const { id } = req.params;
 
     const story: StoryI | null = await StoryModel.findById(id);
+
+    const oldCategoryName = await CategoryModel.findById(story?.category);
 
     if (!story) {
       next(new AppError("No story found with that ID", 404));
@@ -119,6 +160,68 @@ export const updateStory = catchAsync(
         runValidators: true,
       }
     );
+
+    const newCategoryName = await CategoryModel.findById(
+      updatedStory?.category
+    );
+
+    // Update category storyAmounts
+    if (story?.category.toString() !== updatedStory?.category.toString()) {
+      const oldCategory = await CategoryModel.findById(story?.category);
+      const newCategory = await CategoryModel.findById(updatedStory?.category);
+
+      await CategoryModel.findByIdAndUpdate(oldCategory?.id, {
+        storyAmount: oldCategory!.storyAmount - 1,
+      });
+
+      await CategoryModel.findByIdAndUpdate(newCategory?.id, {
+        storyAmount: newCategory!.storyAmount + 1,
+      });
+    }
+
+    // Update language storyAmounts
+    if (
+      story?.languageName.toString() !== updatedStory?.languageName.toString()
+    ) {
+      const oldLanguage = await LanguageModel.findById(story?.languageName);
+      const newLanguage = await LanguageModel.findById(
+        updatedStory?.languageName
+      );
+
+      console.log(oldLanguage);
+      console.log(newLanguage);
+
+      await LanguageModel.findByIdAndUpdate(oldLanguage?.id, {
+        storyAmount: oldLanguage!.storyAmount - 1,
+      });
+
+      await LanguageModel.findByIdAndUpdate(newLanguage?.id, {
+        storyAmount: newLanguage!.storyAmount + 1,
+      });
+    }
+
+    // Update Genre storyAmounts
+    if (story?.genre.toString() !== updatedStory?.genre.toString()) {
+      const oldGenre = await GenreModel.findById(story?.genre);
+      const newGenre = await GenreModel.findById(updatedStory?.genre);
+
+      const updateNewQuery = {
+        $inc: {
+          [`storyAmount.${newCategoryName?.name}`]: 1,
+          "storyAmount.total": 1,
+        },
+      };
+      const updateOldQuery = {
+        $inc: {
+          [`storyAmount.${oldCategoryName?.name}`]: -1,
+          "storyAmount.total": -1,
+        },
+      };
+
+      await GenreModel.findByIdAndUpdate(oldGenre?.id, updateOldQuery);
+
+      await GenreModel.findByIdAndUpdate(newGenre?.id, updateNewQuery);
+    }
 
     res.status(200).json({
       status: "Success",
@@ -159,6 +262,42 @@ export const deleteStory = catchAsync(
 
     if (!deletedStory) {
       next(new AppError("No story found with that ID", 404));
+    }
+
+    const category = await CategoryModel.findById(story!.category);
+    const categoryName = category?.name;
+
+    if (category) {
+      await CategoryModel.findByIdAndUpdate(story!.category, {
+        storyAmount: category.storyAmount - 1,
+      });
+    } else {
+      next(new AppError("No category with this id", 400));
+    }
+
+    const language = await LanguageModel.findById(story!.languageName);
+
+    if (language) {
+      await LanguageModel.findByIdAndUpdate(story!.languageName, {
+        storyAmount: language.storyAmount - 1,
+      });
+    } else {
+      next(new AppError("No language with this id", 400));
+    }
+
+    const genre = await GenreModel.findById(story!.genre);
+
+    if (genre) {
+      const updateQuery = {
+        $inc: {
+          [`storyAmount.${categoryName}`]: -1,
+          "storyAmount.total": -1,
+        },
+      };
+
+      await GenreModel.findByIdAndUpdate(story!.genre, updateQuery);
+    } else {
+      next(new AppError("No genre with this id", 400));
     }
 
     return res.json({
