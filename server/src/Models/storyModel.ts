@@ -14,12 +14,12 @@ export interface StoryI extends Document {
   slug: string;
   category: mongoose.Schema.Types.ObjectId;
   userId: mongoose.Schema.Types.ObjectId;
-  editorId?: mongoose.Schema.Types.ObjectId;
+  editorId?: mongoose.Schema.Types.ObjectId | null;
   editorRequestStatus: editorRequestT;
   picturePath?: string;
   status: statusT;
   ratingsAverage: number;
-  language: mongoose.Schema.Types.ObjectId;
+  languageName: mongoose.Schema.Types.ObjectId;
   genre: mongoose.Schema.Types.ObjectId;
   chapterAmount: number;
   wordAmount: number;
@@ -48,7 +48,7 @@ const StorySchema = new mongoose.Schema({
     type: String,
     enum: ["free", "payFull", "payByChapter"],
     required: [true, "You need to select what access the readers will have"],
-    defrault: "free",
+    default: "free",
   },
   price: {
     type: Number,
@@ -68,6 +68,7 @@ const StorySchema = new mongoose.Schema({
   editorId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "UserModel",
+    default: null,
   },
   editorRequestStatus: {
     type: String,
@@ -116,10 +117,6 @@ const StorySchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    sortingDates: {
-      date: Date.now(),
-      string: new Date().toLocaleDateString("en-US"),
-    },
     default: Date.now,
     get: (date: any) => {
       let seconds = Math.floor((new Date().getTime() - date) / 1000);
@@ -150,10 +147,6 @@ const StorySchema = new mongoose.Schema({
   },
   updatedAt: {
     type: Date,
-    sortingDates: {
-      date: Date.now(),
-      string: new Date().toLocaleDateString("en-US"),
-    },
     default: Date.now,
     get: (date: any) => {
       let seconds = Math.floor((new Date().getTime() - date) / 1000);
