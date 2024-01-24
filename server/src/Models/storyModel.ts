@@ -25,6 +25,7 @@ export interface StoryI extends Document {
   wordAmount: number;
   commentAmount: number;
   bookmarkAmount: number;
+  favoriteAmount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -112,6 +113,10 @@ const StorySchema = new mongoose.Schema({
     default: 0,
   },
   bookmarkAmount: {
+    type: Number,
+    default: 0,
+  },
+  favoriteAmount: {
     type: Number,
     default: 0,
   },
