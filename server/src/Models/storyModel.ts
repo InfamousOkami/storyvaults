@@ -88,7 +88,7 @@ const StorySchema = new mongoose.Schema({
     max: 5,
     set: (val: number) => Math.round(val * 10) / 10,
   },
-  language: {
+  languageName: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "LanguageModel",
     required: [true, "You must select a language for your story"],
