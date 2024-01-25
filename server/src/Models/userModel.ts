@@ -19,7 +19,6 @@ interface externalLinksI {
 export interface UserI extends Document {
   username: string;
   email: string;
-  photo?: string;
   password: string;
   passwordConfirm?: string;
   picturePath: string;
@@ -48,7 +47,12 @@ export interface UserI extends Document {
 }
 
 const UserSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    maxlength: 20,
+  },
   email: {
     type: String,
     required: true,
@@ -56,7 +60,6 @@ const UserSchema = new mongoose.Schema({
     lowercase: true,
     validate: [validator.isEmail, "Please provide a valid email"],
   },
-  photo: String,
   password: {
     type: String,
     required: [true, "Please provide a password"],
