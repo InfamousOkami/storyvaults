@@ -194,7 +194,7 @@ StorySchema.pre("save", function (next) {
     this.price = 0;
   }
   if (this.readerAccess === "payFull" || this.readerAccess === "payByChapter") {
-    this.price = this.price;
+    this.price = parseFloat(this.price.toFixed(2));
   }
 
   // Generates Slug

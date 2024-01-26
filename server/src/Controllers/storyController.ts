@@ -7,6 +7,7 @@ import { CustomRequest } from "../../typings";
 import CategoryModel from "../Models/categoryModel";
 import LanguageModel from "../Models/languageModel";
 import GenreModel from "../Models/genreModel";
+import ChapterModel from "../Models/chapterModel";
 
 // Get Stories
 export const getAllStories = catchAsync(
@@ -161,6 +162,54 @@ export const updateStory = catchAsync(
         runValidators: true,
       }
     );
+
+    if (
+      story?.readerAccess !== "free" &&
+      updatedStory?.readerAccess === "free"
+    ) {
+      await ChapterModel.updateMany(
+        { storyId: story!.id },
+        {
+          price: 0,
+        }
+      );
+
+      await StoryModel.findByIdAndUpdate(story!.id, {
+        price: 0,
+      });
+    }
+
+    if (
+      story?.readerAccess !== "payByChapter" &&
+      updatedStory?.readerAccess === "payByChapter"
+    ) {
+      await ChapterModel.updateMany(
+        { storyId: story!.id },
+        {
+          price: updatedStory.price,
+        }
+      );
+
+      await StoryModel.findByIdAndUpdate(story!.id, {
+        price: updatedStory,
+      });
+    }
+
+    if (
+      story?.readerAccess !== "payFull" &&
+      updatedStory?.readerAccess === "payFull"
+    ) {
+      await ChapterModel.updateMany(
+        { storyId: story!.id },
+        {
+          price: 0,
+        }
+      );
+
+      await StoryModel.findByIdAndUpdate(story!.id, {
+        price: updatedStory,
+      });
+    }
 
     const newCategoryName = await CategoryModel.findById(
       updatedStory?.category
