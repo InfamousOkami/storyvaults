@@ -16,9 +16,47 @@ export const getAllStories = catchAsync(
     res: express.Response,
     next: express.NextFunction
   ) => {
-    const stories = await StoryModel.find()
+    let queryObj = { ...req.query };
+
+    const excludedFields = [
+      "page",
+      "sort",
+      "limit",
+      "fields",
+      "sortOrder",
+      "keywords",
+    ];
+    excludedFields.forEach((el) => delete queryObj[el]);
+
+    if (req.query.keywords) {
+      const keywords = req.query.keywords;
+
+      queryObj = {
+        ...queryObj,
+        $text: { $search: keywords },
+      };
+    }
+
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+
+    let query = StoryModel.find(JSON.parse(queryStr))
       .populate(`languageName genre userId`)
       .sort({ createdAt: 1 });
+
+    if (req.query.sort) {
+      const sortBy = (req.query.sort as string).split(",").join(" ");
+
+      const sortOrder =
+        req.query.sortOrder &&
+        (req.query.sortOrder as string).toLowerCase() === "desc"
+          ? -1
+          : 1;
+
+      query = query.sort({ [sortBy]: sortOrder });
+    }
+
+    const stories = await query;
 
     return res.status(200).json({
       status: "Success",
