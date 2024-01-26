@@ -7,10 +7,11 @@ export interface ChapterI extends Document {
   userId: mongoose.Schema.Types.ObjectId;
   chapterContent: string;
   chapterContentWords: string;
-  wordcount: number;
+  wordCount: number;
   createdAt: Date;
   updatedAt: Date;
   needEditing: boolean;
+  price: number;
 }
 
 const ChapterSchema = new mongoose.Schema({
@@ -21,6 +22,10 @@ const ChapterSchema = new mongoose.Schema({
   chapterNumber: {
     type: Number,
     default: 1,
+  },
+  price: {
+    type: Number,
+    default: 0,
   },
   storyId: {
     type: mongoose.Schema.Types.ObjectId,

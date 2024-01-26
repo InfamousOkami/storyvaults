@@ -19,6 +19,7 @@ import storyRoutes from "./Routes/storyRoutes";
 import categoryRoutes from "./Routes/categoryRoutes";
 import languageRoutes from "./Routes/languageRoutes";
 import genreRoutes from "./Routes/genreRoutes";
+import chapterRoutes from "./Routes/chapterRoutes";
 
 require("dotenv").config();
 
@@ -105,6 +106,7 @@ app.use("/api/v1/stories", storyRoutes);
 app.use("/api/v1/category", categoryRoutes);
 app.use("/api/v1/language", languageRoutes);
 app.use("/api/v1/genre", genreRoutes);
+app.use("/api/v1/chapter", chapterRoutes);
 
 // If server cant find route
 app.all("*", (req, res, next) => {
