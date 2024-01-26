@@ -350,6 +350,8 @@ export const deleteStory = catchAsync(
       next(new AppError("No genre with this id", 400));
     }
 
+    await ChapterModel.deleteMany({ storyId: id });
+
     return res.json({
       status: "Success",
       data: null,

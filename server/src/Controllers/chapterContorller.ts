@@ -112,6 +112,15 @@ export const updateChapter = catchAsync(
       }
     );
 
+    const story = await StoryModel.findById(chapter?.storyId);
+
+    let newWordCount = story!.wordAmount - chapter!.wordCount;
+    newWordCount = newWordCount + updatedChapter!.wordCount;
+
+    await StoryModel.findByIdAndUpdate(chapter?.storyId, {
+      wordAmount: newWordCount,
+    });
+
     res.status(200).json({
       status: "Success",
       data: {
