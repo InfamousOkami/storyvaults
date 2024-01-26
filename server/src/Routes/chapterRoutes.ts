@@ -25,7 +25,7 @@ router.post(
 );
 
 // Patches
-router.patch("/story/:id", isAuthenticated, updateChapter);
+router.patch("/update/:id", isAuthenticated, updateChapter);
 
 // Deletes
 router.delete("/delete/:id", isAuthenticated, deleteChapter);
