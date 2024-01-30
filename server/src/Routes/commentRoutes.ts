@@ -15,7 +15,7 @@ const router = express.Router();
 
 // Gets
 router.get("/", getAllComments);
-router.get("/all/:id", getAllCommentForParentId);
+router.get("/all/:parentId", getAllCommentForParentId);
 router.get("/:id", getComment);
 
 // Create
