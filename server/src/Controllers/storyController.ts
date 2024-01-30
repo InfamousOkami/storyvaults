@@ -40,9 +40,9 @@ export const getAllStories = catchAsync(
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
-    let query = StoryModel.find(JSON.parse(queryStr))
-      .populate(`languageName genre userId`)
-      .sort({ createdAt: 1 });
+    let query = StoryModel.find(JSON.parse(queryStr)).populate(
+      `languageName genre userId`
+    );
 
     if (req.query.sort) {
       const sortBy = (req.query.sort as string).split(",").join(" ");
@@ -54,6 +54,11 @@ export const getAllStories = catchAsync(
           : 1;
 
       query = query.sort({ [sortBy]: sortOrder });
+    } else if (req.query.keywords) {
+      query = query.sort({
+        description: { $meta: "textScore" },
+        title: { $meta: "textScore" },
+      });
     }
 
     const stories = await query;

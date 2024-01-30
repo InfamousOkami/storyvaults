@@ -25,6 +25,7 @@ export interface StoryI extends Document {
   wordAmount: number;
   commentAmount: number;
   bookmarkAmount: number;
+  favorites: Map<mongoose.Schema.Types.ObjectId, boolean>;
   favoriteAmount: number;
   createdAt: Date;
   updatedAt: Date;
@@ -115,6 +116,11 @@ const StorySchema = new mongoose.Schema({
   bookmarkAmount: {
     type: Number,
     default: 0,
+  },
+  favotites: {
+    type: Map,
+    of: Boolean,
+    default: new Map(),
   },
   favoriteAmount: {
     type: Number,

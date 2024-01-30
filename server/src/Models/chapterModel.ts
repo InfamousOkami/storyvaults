@@ -12,6 +12,7 @@ export interface ChapterI extends Document {
   updatedAt: Date;
   needEditing: boolean;
   price: number;
+  likes: Map<mongoose.Schema.Types.ObjectId, boolean>;
 }
 
 const ChapterSchema = new mongoose.Schema({
@@ -52,6 +53,11 @@ const ChapterSchema = new mongoose.Schema({
   wordCount: {
     type: Number,
     default: 0,
+  },
+  likes: {
+    type: Map,
+    of: Boolean,
+    default: new Map(),
   },
   createdAt: {
     type: Date,
