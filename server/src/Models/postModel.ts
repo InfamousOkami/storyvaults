@@ -1,34 +1,27 @@
 import mongoose from "mongoose";
 
-type CommentTypeT = "chapter" | "story" | "comment" | "post";
-
-export interface CommentI extends Document {
-  commentType: CommentTypeT;
+export interface PostI extends Document {
   userId: mongoose.Schema.Types.ObjectId;
-  parentId: string;
-  commentContent: string;
+  subject: string;
+  postContent: string;
   likes: Map<mongoose.Schema.Types.ObjectId, boolean>;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const CommentSchema = new mongoose.Schema({
-  commentType: {
-    type: String,
-    enum: ["chapter", "story", "comment", "post"],
-  },
+const PostSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "UserModel",
     required: true,
   },
-  parentId: {
+  subject: {
+    type: String,
+    maxlength: 100,
+  },
+  postContent: {
     type: String,
     required: true,
-  },
-  commentContent: {
-    type: String,
-    required: [true, "Must provide the comment"],
   },
   likes: {
     type: Map,
@@ -97,6 +90,6 @@ const CommentSchema = new mongoose.Schema({
   },
 });
 
-const CommentModel = mongoose.model("CommentModel", CommentSchema);
+const PostModel = mongoose.model("PostModel", PostSchema);
 
-export default CommentModel;
+export default PostModel;
