@@ -19,12 +19,7 @@ router.get("/all/:id", getAllCommentForParentId);
 router.get("/:id", getComment);
 
 // Create
-router.post(
-  "/new",
-  isAuthenticated,
-  restricToRoles("Writer", "Editor", "Admin", "Owner"),
-  createComment
-);
+router.post("/new", isAuthenticated, createComment);
 
 // Patches
 router.patch("/update/:id", isAuthenticated, updateComment);
