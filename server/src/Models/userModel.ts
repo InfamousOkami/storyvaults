@@ -116,7 +116,10 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  passwordChangedAt: Date,
+  passwordChangedAt: {
+    type: Date,
+    default: Date.now(),
+  },
   passwordResetToken: String,
   passwordResetExpires: Date,
   profileViews: {
