@@ -3,12 +3,19 @@ import { Bars3Icon } from "@heroicons/react/24/solid";
 import { useEffect, useRef, useState } from "react";
 import ProfileMenu from "./profileMenu";
 import MobileMenu from "./mobileMenu";
+import { mobileMenuLinks } from "./menuLinks";
+import Link from "next/link";
+import { useAppSelector } from "@/lib/redux/store";
 
 function Navbar() {
+  const token = useAppSelector((state) => state.authReducer.token);
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
+
+  console.log(token);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -43,6 +50,10 @@ function Navbar() {
     }
   };
 
+  const toggleProfileMenu = () => {
+    setProfileMenuOpen(!profileMenuOpen);
+  };
+
   return (
     <div
       className={`bg-blue-600 w-full py-3 px-2 flex justify-between items-center`}
@@ -50,16 +61,48 @@ function Navbar() {
       {/* Logo */}
       <div>
         <p className="text-gray-50 font-bold text-2xl">
-          Story
-          <span className="text-blue-900">Vaults</span>
+          <Link href="/">
+            Story
+            <span className="text-blue-900">Vaults</span>
+          </Link>
         </p>
       </div>
 
       {/* pages */}
-      <div className="hidden md:block"> pages</div>
+      <div className="hidden md:flex gap-3 text-lg text-white ">
+        {mobileMenuLinks.map((link) => (
+          <Link key={link.name} href={link.link}>
+            <p className="hover:text-blue-950">{link.name}</p>
+          </Link>
+        ))}
+      </div>
 
       {/* User Links */}
-      <div className="hidden md:block">user</div>
+      {token ? (
+        <>
+          <div
+            className="hidden md:flex items-center gap-2"
+            onClick={toggleProfileMenu}
+          >
+            <div className="rounded-full bg-black w-8 h-8" />
+            <p>Username</p>
+          </div>
+          <div className="hidden md:block absolute right-0 top-14">
+            {profileMenuOpen && (
+              <div ref={profileMenuRef} className="relative  w-fit text-center">
+                <ProfileMenu />
+              </div>
+            )}
+          </div>
+        </>
+      ) : (
+        <Link
+          className="hidden md:block text-white text-lg hover:text-blue-950"
+          href="/login"
+        >
+          Log In
+        </Link>
+      )}
 
       {/* Mobile Menu */}
       <div className="md:hidden" onClick={toggleMenus}>

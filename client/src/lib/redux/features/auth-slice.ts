@@ -2,7 +2,8 @@ import { UserI, externalLinksI } from "@/typings";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type InitialStateT = {
-  value: AuthStateT;
+  user: AuthStateT;
+  token: string | null;
 };
 
 type AuthStateT = {
@@ -24,12 +25,8 @@ type AuthStateT = {
   active: boolean;
 };
 
-// type InitialState = {
-//   value: AuthState;
-// };
-
 const initialState = {
-  value: {
+  user: {
     username: "",
     email: "",
     picturePath: "",
@@ -47,6 +44,7 @@ const initialState = {
     profileViews: 0,
     active: false,
   } as AuthStateT,
+  token: null,
 } as InitialStateT;
 
 export const auth = createSlice({
@@ -56,26 +54,28 @@ export const auth = createSlice({
     logOut: () => {
       return initialState;
     },
-    logIn: (state, action: PayloadAction<UserI>) => {
+    logIn: (state, action: PayloadAction<{ user: UserI; token: string }>) => {
+      const { user, token } = action.payload;
       return {
-        value: {
-          username: action.payload.username,
-          email: action.payload.email,
-          picturePath: action.payload.picturePath,
-          bio: action.payload.bio,
-          role: action.payload.role,
-          followers: action.payload.followers,
-          following: action.payload.following,
-          favoritedStories: action.payload.favoritedStories,
-          language: action.payload.language,
-          externalLinks: action.payload.externalLinks,
-          theme: action.payload.theme,
-          adultContent: action.payload.adultContent,
-          tosAccepted: action.payload.tosAccepted,
-          passwordChangedAt: action.payload.passwordChangedAt,
-          profileViews: action.payload.profileViews,
-          active: action.payload.active,
+        user: {
+          username: user.username,
+          email: user.email,
+          picturePath: user.picturePath,
+          bio: user.bio,
+          role: user.role,
+          followers: user.followers,
+          following: user.following,
+          favoritedStories: user.favoritedStories,
+          language: user.language,
+          externalLinks: user.externalLinks,
+          theme: user.theme,
+          adultContent: user.adultContent,
+          tosAccepted: user.tosAccepted,
+          passwordChangedAt: user.passwordChangedAt,
+          profileViews: user.profileViews,
+          active: user.active,
         },
+        token: token,
       };
     },
   },

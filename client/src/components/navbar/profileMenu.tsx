@@ -41,6 +41,14 @@ const profileMenuLinks = [
     isAdmin: false,
     isOwner: false,
   },
+  {
+    name: "Logout",
+    link: "/logout",
+    isWriter: false,
+    isEditor: false,
+    isAdmin: false,
+    isOwner: false,
+  },
 ];
 
 function ProfileMenu() {

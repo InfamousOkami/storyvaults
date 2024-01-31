@@ -1,31 +1,5 @@
 import Link from "next/link";
-
-const mobileMenuLinks = [
-  {
-    name: "home",
-    link: "/",
-    isWriter: false,
-    isEditor: false,
-    isAdmin: false,
-    isOwner: false,
-  },
-  {
-    name: "Stories",
-    link: "/Stories",
-    isWriter: false,
-    isEditor: false,
-    isAdmin: false,
-    isOwner: false,
-  },
-  {
-    name: "Vaults",
-    link: "/Vaults",
-    isWriter: false,
-    isEditor: false,
-    isAdmin: false,
-    isOwner: false,
-  },
-];
+import { mobileMenuLinks } from "./menuLinks";
 
 const linkStyles = `py-2 px-3 hover:bg-blue-800 bg-blue-700 cursor-pointer`;
 
