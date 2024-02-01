@@ -8,14 +8,12 @@ import Link from "next/link";
 import { useAppSelector } from "@/lib/redux/store";
 
 function Navbar() {
-  const token = useAppSelector((state) => state.authReducer.token);
+  const token = useAppSelector((state) => state.token);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
-
-  console.log(token);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

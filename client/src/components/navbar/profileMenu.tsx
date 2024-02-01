@@ -1,4 +1,7 @@
+import { logOut } from "@/lib/redux/features/auth-slice";
+import { AppDispatch } from "@/lib/redux/store";
 import Link from "next/link";
+import { useDispatch } from "react-redux";
 
 const profileMenuLinks = [
   {
@@ -41,32 +44,28 @@ const profileMenuLinks = [
     isAdmin: false,
     isOwner: false,
   },
-  {
-    name: "Logout",
-    link: "/logout",
-    isWriter: false,
-    isEditor: false,
-    isAdmin: false,
-    isOwner: false,
-  },
 ];
 
 function ProfileMenu() {
+  const dispatch = useDispatch<AppDispatch>();
+
   return (
     <div>
       {profileMenuLinks.map((link, i) => (
         <Link key={link.name} href={link.link}>
           <p
-            className={`py-2 px-3 hover:bg-blue-800 bg-blue-700 cursor-pointer ${
-              i === profileMenuLinks.length - 1
-                ? ``
-                : `border-b-2 border-blue-900`
-            }`}
+            className={`py-2 px-3 hover:bg-blue-800 bg-blue-700 cursor-pointer border-b-2 border-blue-900`}
           >
             {link.name}
           </p>
         </Link>
       ))}
+      <p
+        className="py-2 px-3 hover:bg-blue-800 bg-blue-700 cursor-pointer`"
+        onClick={() => dispatch(logOut())}
+      >
+        Logout
+      </p>
     </div>
   );
 }
