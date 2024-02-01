@@ -12,15 +12,14 @@ type AuthStateT = {
   picturePath: string;
   bio: string;
   role: string;
-  followers: Map<string, boolean>;
-  following: Map<string, boolean>;
-  favoritedStories: Map<string, boolean>;
+  followers: string[];
+  following: string[];
+  favoritedStories: string[];
   language: string;
   externalLinks: externalLinksI[];
   theme: string;
   adultContent: boolean;
   tosAccepted: boolean;
-  passwordChangedAt: Date;
   profileViews: number;
   active: boolean;
 };
@@ -32,15 +31,14 @@ const initialState = {
     picturePath: "",
     bio: "",
     role: "",
-    followers: new Map<string, boolean>(),
-    following: new Map<string, boolean>(),
-    favoritedStories: new Map<string, boolean>(),
+    followers: [],
+    following: [],
+    favoritedStories: [],
     language: "",
     externalLinks: [],
     theme: "dark",
     adultContent: false,
     tosAccepted: false,
-    passwordChangedAt: new Date(),
     profileViews: 0,
     active: false,
   } as AuthStateT,
@@ -63,15 +61,14 @@ export const auth = createSlice({
           picturePath: user.picturePath,
           bio: user.bio,
           role: user.role,
-          followers: user.followers,
-          following: user.following,
-          favoritedStories: user.favoritedStories,
+          followers: user.followers || [],
+          following: user.following || [],
+          favoritedStories: user.favoritedStories || [],
           language: user.language,
           externalLinks: user.externalLinks,
           theme: user.theme,
           adultContent: user.adultContent,
           tosAccepted: user.tosAccepted,
-          passwordChangedAt: user.passwordChangedAt,
           profileViews: user.profileViews,
           active: user.active,
         },

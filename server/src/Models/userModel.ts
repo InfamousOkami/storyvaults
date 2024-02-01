@@ -24,9 +24,9 @@ export interface UserI extends Document {
   picturePath: string;
   bio: string;
   role: "Reader" | "Writer" | "Editor" | "Admin" | "Owner";
-  followers: Map<mongoose.Schema.Types.ObjectId, boolean>;
-  following: Map<mongoose.Schema.Types.ObjectId, boolean>;
-  favoritedStories: Map<mongoose.Schema.Types.ObjectId, boolean>;
+  followers: string[];
+  following: string[];
+  favoritedStories: string[];
   language: string;
   externalLinks: externalLinksI[];
   theme?: "dark" | "light";
@@ -88,19 +88,16 @@ const UserSchema = new mongoose.Schema({
     default: "Reader",
   },
   followers: {
-    type: Map,
-    of: Boolean,
-    default: new Map(),
+    type: Array,
+    default: [],
   },
   following: {
-    type: Map,
-    of: Boolean,
-    default: new Map(),
+    type: Array,
+    default: [],
   },
   favoritedStories: {
-    type: Map,
-    of: Boolean,
-    default: new Map(),
+    type: Array,
+    default: [],
   },
   language: { type: String, default: "english" },
   externalLinks: { type: Array<externalLinksI>, default: [] },
