@@ -20,7 +20,11 @@ type AuthStateT = {
   theme: string;
   adultContent: boolean;
   tosAccepted: boolean;
-  profileViews: number;
+  profileViews: {
+    total: number;
+    monthlyCount: number;
+    lastUpdated: Date;
+  } | null;
   active: boolean;
 };
 
@@ -39,7 +43,7 @@ const initialState = {
     theme: "dark",
     adultContent: false,
     tosAccepted: false,
-    profileViews: 0,
+    profileViews: null,
     active: false,
   } as AuthStateT,
   token: null,
@@ -61,9 +65,9 @@ export const auth = createSlice({
           picturePath: user.picturePath,
           bio: user.bio,
           role: user.role,
-          followers: user.followers || [],
-          following: user.following || [],
-          favoritedStories: user.favoritedStories || [],
+          followers: user.followers,
+          following: user.following,
+          favoritedStories: user.favoritedStories,
           language: user.language,
           externalLinks: user.externalLinks,
           theme: user.theme,

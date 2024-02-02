@@ -57,7 +57,7 @@ function Navbar() {
       className={`bg-blue-600 w-full py-3 px-2 flex justify-between items-center`}
     >
       {/* Logo */}
-      <div>
+      <div className="w-[140px]">
         <p className="text-gray-50 font-bold text-2xl">
           <Link href="/">
             Story
@@ -79,13 +79,13 @@ function Navbar() {
       {token ? (
         <>
           <div
-            className="hidden md:flex items-center gap-2"
+            className="hidden md:flex justify-end items-center gap-2 w-[140px]"
             onClick={toggleProfileMenu}
           >
-            <div className="rounded-full bg-black w-8 h-8" />
-            <p>Username</p>
+            <div className="rounded-full bg-black w-8 h-8 " />
+            <p className="text-white">Username</p>
           </div>
-          <div className="hidden md:block absolute right-0 top-14">
+          <div className="hidden text-white md:block absolute right-0 top-14">
             {profileMenuOpen && (
               <div ref={profileMenuRef} className="relative  w-fit text-center">
                 <ProfileMenu />

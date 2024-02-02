@@ -35,7 +35,11 @@ export interface UserI extends Document {
   passwordChangedAt?: Date;
   passwordResetToken?: string;
   passwordResetExpires?: Date;
-  profileViews: number;
+  profileViews: {
+    total: number;
+    monthlyCount: number;
+    lastUpdated: Date;
+  };
   active: boolean;
 
   // Methods
@@ -120,8 +124,9 @@ const UserSchema = new mongoose.Schema({
   passwordResetToken: String,
   passwordResetExpires: Date,
   profileViews: {
-    type: Number,
-    default: 0,
+    total: { type: Number, default: 0 },
+    monthlyCount: { type: Number, default: 0 },
+    lastUpdated: { type: Date, default: Date.now },
   },
   active: {
     type: Boolean,

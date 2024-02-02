@@ -29,7 +29,11 @@ export interface UserI extends Document {
   passwordChangedAt?: Date;
   passwordResetToken?: string;
   passwordResetExpires?: Date;
-  profileViews: number;
+  profileViews: {
+    total: number;
+    monthlyCount: number;
+    lastUpdated: Date;
+  };
   active: boolean;
 
   // Methods

@@ -4,7 +4,6 @@ import authReducer from "./features/auth-slice";
 import { TypedUseSelectorHook, useSelector } from "react-redux";
 
 import {
-  persistStore,
   persistReducer,
   FLUSH,
   REHYDRATE,
