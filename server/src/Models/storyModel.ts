@@ -24,9 +24,17 @@ export interface StoryI extends Document {
   chapterAmount: number;
   wordAmount: number;
   commentAmount: number;
-  bookmarkAmount: number;
+  bookmarkAmount: {
+    total: number;
+    monthlyCount: number;
+    lastUpdated: Date;
+  };
   favorites: Map<mongoose.Schema.Types.ObjectId, boolean>;
-  favoriteAmount: number;
+  favoriteAmount: {
+    total: number;
+    monthlyCount: number;
+    lastUpdated: Date;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -114,8 +122,9 @@ const StorySchema = new mongoose.Schema({
     default: 0,
   },
   bookmarkAmount: {
-    type: Number,
-    default: 0,
+    total: { type: Number, default: 0 },
+    monthlyCount: { type: Number, default: 0 },
+    lastUpdated: { type: Date, default: Date.now() },
   },
   favotites: {
     type: Map,
@@ -123,8 +132,9 @@ const StorySchema = new mongoose.Schema({
     default: new Map(),
   },
   favoriteAmount: {
-    type: Number,
-    default: 0,
+    total: { type: Number, default: 0 },
+    monthlyCount: { type: Number, default: 0 },
+    lastUpdated: { type: Date, default: Date.now() },
   },
   createdAt: {
     type: Date,

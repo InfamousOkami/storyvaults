@@ -126,7 +126,7 @@ const UserSchema = new mongoose.Schema({
   profileViews: {
     total: { type: Number, default: 0 },
     monthlyCount: { type: Number, default: 0 },
-    lastUpdated: { type: Date, default: Date.now },
+    lastUpdated: { type: Date, default: Date.now() },
   },
   active: {
     type: Boolean,
