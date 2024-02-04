@@ -57,6 +57,17 @@ const UserSchema = new mongoose.Schema({
     required: true,
     unique: true,
     maxlength: 20,
+    validate: {
+      validator: async function (value: string): Promise<boolean> {
+        // Check for uniqueness case-insensitively
+        const existingUser = await UserModel.findOne({
+          username: { $regex: new RegExp("^" + value + "$", "i") },
+        });
+
+        return !existingUser;
+      },
+      message: "Username is already taken",
+    },
   },
   email: {
     type: String,
@@ -136,7 +147,7 @@ const UserSchema = new mongoose.Schema({
 });
 
 // Middleware
-UserSchema.pre("save", async function (next) {
+UserSchema.pre("save", async function (next: () => void) {
   // Runs Function if Password is modified
   if (!this.isModified("password")) return next();
 
@@ -149,14 +160,14 @@ UserSchema.pre("save", async function (next) {
   next();
 });
 
-UserSchema.pre("save", function (next) {
+UserSchema.pre("save", function (this: any, next: () => void) {
   if (!this.isModified("password") || this.isNew) return next();
 
   this.set("passwordChangedAt", Date.now() - 1000);
   next();
 });
 
-UserSchema.pre(/^find/, function (this: any, next) {
+UserSchema.pre(/^find/, function (this: any, next: () => void) {
   // Current query only finds users that are active
   this.find({ active: true });
 
