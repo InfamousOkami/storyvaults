@@ -8,6 +8,7 @@ import {
   deleteStory,
   getAllStories,
   getStory,
+  getTopStories,
   updateStory,
 } from "../Controllers/storyController";
 
@@ -15,6 +16,7 @@ const router = express.Router();
 
 // Gets
 router.get("/", getAllStories);
+router.get("/top/:categoryId", getTopStories);
 router.get("/:id", getStory);
 
 // Create

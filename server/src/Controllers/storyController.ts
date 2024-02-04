@@ -75,6 +75,30 @@ export const getAllStories = catchAsync(
   }
 );
 
+export const getTopStories = catchAsync(
+  async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const { categoryId } = req.params;
+    const stories = await StoryModel.find({ category: categoryId })
+      .populate(`languageName genre userId category`)
+      .sort({ ratingsAverage: -1 })
+      .limit(5);
+
+    return res.status(200).json({
+      status: "Success",
+      results: stories.length,
+      data: stories,
+      pagination: {
+        total: stories.length,
+        pages: Math.ceil(stories.length / 25),
+      },
+    });
+  }
+);
+
 export const getStory = catchAsync(
   async (
     req: express.Request,

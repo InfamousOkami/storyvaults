@@ -15,10 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="bg-gray-200">
         <ReduxProvider>
           <Navbar />
-          {children}
+          <div className="w-full md:w-[90%] m-auto bg-white">{children}</div>
         </ReduxProvider>
       </body>
     </html>

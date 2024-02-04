@@ -43,12 +43,12 @@ if (process.env.NODE_ENV === "development") {
 }
 
 // Limit Request from same Ip
-const limiter = ratelimit({
-  max: 100,
-  windowMs: 60 * 60 * 1000,
-  message: "To many requests from this IP, please try again in an hour!",
-});
-app.use("/api", limiter);
+// const limiter = ratelimit({
+//   max: 100,
+//   windowMs: 60 * 60 * 1000,
+//   message: "To many requests from this IP, please try again in an hour!",
+// });
+// app.use("/api", limiter);
 
 // Data sanitization, Removes $ and .'s, Stops noSQL injections
 app.use(mongoSanitize());
