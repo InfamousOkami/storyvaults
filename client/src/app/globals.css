@@ -2,21 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-@keyframes spin {
+@keyframes pulse {
   0% {
     transform: rotate(0deg);
   }
-  25% {
-    background-color: #98c7ec;
+  20% {
+    background-color: #c4def4;
   }
-  50% {
-    background-color: #4299e1;
+  40% {
+    background-color: #8bc1ed;
   }
-  75% {
-    background-color: #266ca5;
+  60% {
+    background-color: #519ad7;
+  }
+  80% {
+    background-color: #1c639e;
   }
   100% {
-    background-color: #103a5c;
+    background-color: #1a5791;
   }
 }
 
@@ -25,5 +28,5 @@
   height: 24px;
   width: 24px;
   margin: 0 4px;
-  animation: spin 1.5s linear infinite;
+  animation: pulse 1s normal infinite;
 }
