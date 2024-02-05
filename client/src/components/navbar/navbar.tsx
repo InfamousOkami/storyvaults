@@ -80,7 +80,7 @@ function Navbar() {
       {token ? (
         <>
           <div
-            className="hidden md:flex justify-end items-center gap-2 w-[140px]"
+            className="hidden md:flex justify-end items-center gap-2 w-[140px] cursor-pointer"
             onClick={toggleProfileMenu}
           >
             <div className="rounded-full bg-black w-8 h-8 " />
@@ -89,7 +89,7 @@ function Navbar() {
           <div className="hidden text-white md:block absolute right-0 top-14">
             {profileMenuOpen && (
               <div ref={profileMenuRef} className="relative  w-fit text-center">
-                <ProfileMenu />
+                <ProfileMenu closeMenus={toggleMenus} />
               </div>
             )}
           </div>
@@ -110,7 +110,7 @@ function Navbar() {
       <div className="absolute right-0 top-14 flex text-white md:hidden">
         {profileMenuOpen && (
           <div ref={profileMenuRef} className="relative  w-fit text-center">
-            <ProfileMenu />
+            <ProfileMenu closeMenus={toggleMenus} />
           </div>
         )}
         {menuOpen && (
@@ -118,6 +118,7 @@ function Navbar() {
             <MobileMenu
               setProfileMenuOpen={setProfileMenuOpen}
               profileMenuOpen={profileMenuOpen}
+              closeMenus={toggleMenus}
             />
           </div>
         )}

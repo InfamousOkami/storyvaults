@@ -5,7 +5,7 @@ import { useAppSelector } from "@/lib/redux/store";
 
 const linkStyles = `py-2 px-3 hover:bg-blue-800 bg-blue-700 cursor-pointer`;
 
-function MobileMenu({ setProfileMenuOpen, profileMenuOpen }: any) {
+function MobileMenu({ setProfileMenuOpen, profileMenuOpen, closeMenus }: any) {
   const token = useAppSelector((state) => state.token);
   const user = useAppSelector((state) => state.user);
 
@@ -14,11 +14,10 @@ function MobileMenu({ setProfileMenuOpen, profileMenuOpen }: any) {
       {token ? (
         <div
           className={`${linkStyles} py-1 border-b-2 border-blue-900 flex gap-1 justify-center items-center`}
+          onClick={() => setProfileMenuOpen(!profileMenuOpen)}
         >
           <div className="rounded-full bg-black w-8 h-8 " />
-          <p onClick={() => setProfileMenuOpen(!profileMenuOpen)}>
-            {user.username}
-          </p>
+          <p>{user.username}</p>
         </div>
       ) : (
         <Link href="/login">
@@ -30,7 +29,7 @@ function MobileMenu({ setProfileMenuOpen, profileMenuOpen }: any) {
         </Link>
       )}
       {mobileMenuLinks.map((link, i) => (
-        <Link key={link.name} href={link.link}>
+        <Link key={link.name} onClick={closeMenus} href={link.link}>
           <p
             className={`${linkStyles} ${
               i === mobileMenuLinks.length - 1
