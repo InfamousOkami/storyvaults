@@ -63,7 +63,11 @@ export interface StoryI extends Document {
   editorRequestStatus: editorRequestT;
   picturePath?: string;
   status: statusT;
-  ratingsAverage: number;
+  ratingsAverage: {
+    total: number;
+    monthlyCount: number;
+    lastUpdated: Date;
+  };
   languageName: mongoose.Schema.Types.ObjectId;
   genre: mongoose.Schema.Types.ObjectId;
   chapterAmount: number;

@@ -22,7 +22,7 @@ function Card({ story }: { story: StoryI }) {
   const getStoryPrice = (accessType: string) => {
     switch (accessType) {
       case "free":
-        return { type: "Free", amount: "0.00" };
+        return { type: "Price", amount: "Free" };
 
       case "payFull":
         return { type: "Full Price", amount: story.price };
@@ -31,7 +31,7 @@ function Card({ story }: { story: StoryI }) {
         return { type: "Pay By Chapter", amount: story.price };
 
       default:
-        return { type: "Free", amount: "0.00" };
+        return { type: "Price", amount: "Free" };
     }
   };
 
@@ -70,47 +70,56 @@ function Card({ story }: { story: StoryI }) {
 
       {/* Bottom flex - Information */}
       <div className="bg-blue-50 p-1 text-sm flex flex-wrap gap-[.4rem] leading-3">
+        {/* Status */}
         <p>
           Status:
           <span> {story.status}</span>
         </p>
         <Breaker type="between" />
+
+        {/* Bookmark Amount  */}
         <p>
           Bookmarks:
           <span> {story.bookmarkAmount.total}</span>
         </p>
         <Breaker type="between" />
 
+        {/* Category */}
         <p>
           Category:
           <span> {getCategoryName(story.category.name)}</span>
         </p>
         <Breaker type="between" />
 
+        {/* Genre */}
         <p>
           Genre:
           <span> {story.genre.name}</span>
         </p>
         <Breaker type="between" />
 
+        {/* Language */}
         <p>
           Language:
           <span> {story.languageName.name}</span>
         </p>
         <Breaker type="between" />
 
+        {/* Chapter Amount */}
         <p>
           Chapters:
           <span> {story.chapterAmount}</span>
         </p>
         <Breaker type="between" />
 
+        {/* Comment Amount */}
         <p>
           Comments:
           <span> {story.commentAmount}</span>
         </p>
         <Breaker type="between" />
 
+        {/* Created At */}
         <p>
           Created:
           {/*@ts-ignore*/}
@@ -118,6 +127,7 @@ function Card({ story }: { story: StoryI }) {
         </p>
         <Breaker type="between" />
 
+        {/* Updated At */}
         <p>
           Updated:
           {/*@ts-ignore*/}
@@ -125,26 +135,30 @@ function Card({ story }: { story: StoryI }) {
         </p>
         <Breaker type="between" />
 
+        {/* Favorites */}
         <p>
           Favorites:
           <span> {story.favoriteAmount.total}</span>
         </p>
         <Breaker type="between" />
 
+        {/* Price */}
         <p>
           {getStoryPrice(story.readerAccess).type}:
           <span> {getStoryPrice(story.readerAccess).amount}</span>
         </p>
         <Breaker type="between" />
 
+        {/* Rating */}
         <p>
           Rating:
-          <span> {story.ratingsAverage}</span>
+          <span> {story.ratingsAverage.total}</span>
         </p>
         <Breaker type="between" />
 
+        {/* WordCount */}
         <p>
-          Word Count:
+          Wordcount:
           <span> {story.wordAmount}</span>
         </p>
       </div>
