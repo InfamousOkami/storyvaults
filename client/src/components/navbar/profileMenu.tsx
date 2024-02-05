@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 
 const profileMenuLinks = [
   {
-    name: "profile",
+    name: "Profile",
     link: "/profile",
     isWriter: false,
     isEditor: false,

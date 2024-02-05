@@ -9,6 +9,7 @@ import { useAppSelector } from "@/lib/redux/store";
 
 function Navbar() {
   const token = useAppSelector((state) => state.token);
+  const user = useAppSelector((state) => state.user);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -83,7 +84,7 @@ function Navbar() {
             onClick={toggleProfileMenu}
           >
             <div className="rounded-full bg-black w-8 h-8 " />
-            <p className="text-white">Username</p>
+            <p className="text-white">{user.username}</p>
           </div>
           <div className="hidden text-white md:block absolute right-0 top-14">
             {profileMenuOpen && (
