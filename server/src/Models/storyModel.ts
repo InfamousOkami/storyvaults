@@ -93,11 +93,21 @@ const StorySchema = new mongoose.Schema({
     default: "Incomplete",
   },
   ratingsAverage: {
-    type: Number,
-    default: 0,
-    min: 0,
-    max: 5,
-    set: (val: number) => Math.round(val * 10) / 10,
+    total: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 5,
+      set: (val: number) => Math.round(val * 10) / 10,
+    },
+    monthlyCount: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 5,
+      set: (val: number) => Math.round(val * 10) / 10,
+    },
+    lastUpdated: { type: Date, default: Date.now() },
   },
   languageName: {
     type: mongoose.Schema.Types.ObjectId,

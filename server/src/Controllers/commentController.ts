@@ -109,7 +109,7 @@ export const updateComment = catchAsync(
 
     const updatedComment = await CommentModel.findByIdAndUpdate(
       id,
-      { ...req.body },
+      { ...req.body, updatedAt: Date.now() },
       {
         new: true,
         runValidators: true,

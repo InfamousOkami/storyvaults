@@ -105,7 +105,7 @@ export const updateChapter = catchAsync(
 
     const updatedChapter = await ChapterModel.findByIdAndUpdate(
       id,
-      { ...req.body },
+      { ...req.body, updatedAt: Date.now() },
       {
         new: true,
         runValidators: true,
