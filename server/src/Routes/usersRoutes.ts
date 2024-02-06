@@ -8,6 +8,7 @@ import {
   getUser,
   updateMe,
   updateUser,
+  getUserByUsernameProfile,
 } from "../Controllers/userController";
 
 import {
@@ -21,6 +22,7 @@ const router = express.Router();
 // Gets
 router.get("/", isAuthenticated, getAllUsers);
 router.get("/:id", getUser);
+router.get("/username/:username", getUserByUsernameProfile);
 
 // Patches
 router.patch("/updateMe", isAuthenticated, isOwnerOrAdmin, updateMe);

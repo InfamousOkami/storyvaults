@@ -78,6 +78,32 @@ export const getUser = catchAsync(
   }
 );
 
+export const getUserByUsernameProfile = catchAsync(
+  async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const user = await UserModel.findOne({
+      username: req.params.username,
+    }).collation({
+      locale: "en",
+      strength: 1,
+    });
+
+    if (!user) {
+      next(new AppError("No user found with that ID", 404));
+    }
+
+    return res.status(200).json({
+      status: "Success",
+      data: {
+        user,
+      },
+    });
+  }
+);
+
 // Update User
 export const updateMe = catchAsync(
   async (
