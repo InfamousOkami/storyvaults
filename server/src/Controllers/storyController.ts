@@ -75,6 +75,26 @@ export const getAllStories = catchAsync(
   }
 );
 
+export const getUserStories = catchAsync(
+  async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const stories = await StoryModel.find({ userId: req.params.id });
+
+    return res.status(200).json({
+      status: "Success",
+      results: stories.length,
+      data: stories,
+      pagination: {
+        total: stories.length,
+        pages: Math.ceil(stories.length / 25),
+      },
+    });
+  }
+);
+
 export const getTopStories = catchAsync(
   async (
     req: express.Request,

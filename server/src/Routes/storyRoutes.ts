@@ -9,6 +9,7 @@ import {
   getAllStories,
   getStory,
   getTopStories,
+  getUserStories,
   updateStory,
 } from "../Controllers/storyController";
 
@@ -16,6 +17,7 @@ const router = express.Router();
 
 // Gets
 router.get("/", getAllStories);
+router.get("/user/:id", getUserStories);
 router.get("/top/:categoryId", getTopStories);
 router.get("/:id", getStory);
 

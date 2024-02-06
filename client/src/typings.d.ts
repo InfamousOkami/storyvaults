@@ -35,6 +35,7 @@ export interface UserI extends Document {
     lastUpdated: Date;
   };
   active: boolean;
+  _id: string;
 
   // Methods
   correctPassword(

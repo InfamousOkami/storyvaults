@@ -1,12 +1,14 @@
 "use client";
 import LoadingPulse from "@/components/loading/LoadingSpinner";
+import ProfileStories from "@/components/profile/profileStories";
 import ProfileTopCard from "@/components/profile/profileTopCard";
+import { UserI } from "@/typings";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 function Profile() {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState<UserI | null>();
   const [isLoading, setIsLoading] = useState(true);
   const params = useParams();
 
@@ -14,7 +16,6 @@ function Profile() {
     const userData = await axios.get(
       `http://localhost:8080/api/v1/users/username/${username}`
     );
-    console.log(userData.data.data.user);
     setUser(userData.data.data.user);
     setIsLoading(false);
   };
@@ -26,8 +27,9 @@ function Profile() {
   if (isLoading) return <LoadingPulse />;
 
   return (
-    <div>
+    <div className="flex flex-col gap-5">
       <ProfileTopCard user={user!} />
+      <ProfileStories user={user!} />
     </div>
   );
 }
