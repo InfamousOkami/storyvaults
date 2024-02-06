@@ -3,6 +3,8 @@ import { UserModel } from "../Models/userModel";
 import catchAsync from "../utils/catchAsync";
 import AppError from "../utils/appError";
 import { CustomRequest } from "../../typings";
+import { externalLinksI } from "../Models/userModel";
+import validator from "validator";
 
 const filterObj = (obj: any, ...allowedFields: string[]) => {
   const newObj: Record<string, any> = {};
@@ -166,6 +168,37 @@ export const updateUser = catchAsync(
     await user!.save();
 
     return res.status(200).json(user).end();
+  }
+);
+
+export const updateUserExternalLinks = catchAsync(
+  async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const { id } = req.params;
+    const newExternalLinks: externalLinksI[] = [];
+
+    Object.keys(req.body).forEach((key) => {
+      newExternalLinks.push(req.body[key]);
+    });
+
+    const user = await UserModel.findByIdAndUpdate(
+      id,
+      {
+        externalLinks: newExternalLinks,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    return res.status(200).json({
+      status: "success",
+      data: user,
+    });
   }
 );
 

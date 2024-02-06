@@ -9,6 +9,7 @@ import {
   updateMe,
   updateUser,
   getUserByUsernameProfile,
+  updateUserExternalLinks,
 } from "../Controllers/userController";
 
 import {
@@ -27,6 +28,12 @@ router.get("/username/:username", getUserByUsernameProfile);
 // Patches
 router.patch("/updateMe", isAuthenticated, isOwnerOrAdmin, updateMe);
 router.patch("/user/:id", isAuthenticated, isOwnerOrAdmin, updateUser);
+router.patch(
+  "/links/:id",
+  isAuthenticated,
+  isOwnerOrAdmin,
+  updateUserExternalLinks
+);
 
 // Deletes
 router.delete("/:id", isAuthenticated, isOwnerOrAdmin, deleteUser);

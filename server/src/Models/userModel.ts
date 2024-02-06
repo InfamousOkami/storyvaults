@@ -11,7 +11,7 @@ type externalLinksType =
   | "linktree"
   | "other";
 
-interface externalLinksI {
+export interface externalLinksI {
   type: externalLinksType;
   href: string;
 }
@@ -115,7 +115,7 @@ const UserSchema = new mongoose.Schema({
     default: [],
   },
   language: { type: String, default: "english" },
-  externalLinks: { type: Array<externalLinksI>, default: [] },
+  externalLinks: { type: Array, default: [] },
   theme: {
     type: String,
     enum: ["dark", "light"],
