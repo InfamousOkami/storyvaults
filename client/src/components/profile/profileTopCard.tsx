@@ -158,7 +158,7 @@ function ProfileTopCard({ user }: { user: UserI }) {
       {user.externalLinks.length > 0 && (
         <div className="flex flex-col items-center md:gap-1 ">
           <p className="underline text-lg">Links</p>
-          <div className="flex flex-col gap-1 md:flex-row md:gap-3">
+          <div className="flex flex-wrap gap-3">
             {user.externalLinks.map((link) => (
               <Link
                 key={link.href}

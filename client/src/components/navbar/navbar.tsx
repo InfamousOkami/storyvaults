@@ -55,7 +55,7 @@ function Navbar() {
 
   return (
     <div
-      className={`bg-blue-600 w-full py-3 px-2 flex justify-between items-center`}
+      className={`bg-blue-600 w-full py-3 px-2 flex justify-between items-center shadow-sm shadow-blue-800 drop-shadow-lg`}
     >
       {/* Logo */}
       <div className="w-[140px]">

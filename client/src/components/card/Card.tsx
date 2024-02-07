@@ -36,23 +36,23 @@ function Card({ story }: { story: StoryI }) {
   };
 
   return (
-    <>
-      <div className="flex gap-2  p-1">
+    <div className="bg-gray-100 rounded-lg mx-1">
+      <div className="flex gap-2 p-1 m-1">
         {/* Left flex - Image */}
-        <div className=" flex-1">
-          <div className="w-16 h-24 md:w-32 md:h-44 bg-blue-500"></div>
+        <div className=" flex-1 ">
+          <div className="w-24 h-36 rounded-lg md:w-32 md:h-44 bg-blue-500 drop-shadow-lg shadow-sm shadow-blue-600"></div>
         </div>
 
         {/* Right Flex - title, username, description */}
         <div className="flex-2 self-start w-full">
           {/* Title & Username */}
-          <div className="flex gap-2 text-sm md:text-lg">
+          <div className="flex gap-2 text-md md:text-lg">
             <Link href={`/story/${story._id}`}>
               <h1 className="underline">{story.title}</h1>
             </Link>
             <Link
               className="flex gap-1"
-              href={`profile/${story.userId.username}`}
+              href={`/profile/${story.userId.username}`}
             >
               <p>By:</p>
               <p className="text-blue-700">{story.userId.username}</p>
@@ -60,7 +60,7 @@ function Card({ story }: { story: StoryI }) {
           </div>
 
           {/* Description */}
-          <div>
+          <div className="max-h-32 overflow-scroll md:overflow-hidden md:max-h-[500px]">
             <p className="text-xs md:text-base md:leading-4">
               {story.description}
             </p>
@@ -69,7 +69,7 @@ function Card({ story }: { story: StoryI }) {
       </div>
 
       {/* Bottom flex - Information */}
-      <div className="bg-blue-50 p-1 text-sm flex flex-wrap gap-[.4rem] leading-3">
+      <div className="bg-gray-200 rounded-lg text-gray-800 p-1 text-xs md:text-sm flex flex-wrap gap-[.4rem] leading-3">
         {/* Status */}
         <p>
           Status:
@@ -162,7 +162,7 @@ function Card({ story }: { story: StoryI }) {
           <span> {story.wordAmount}</span>
         </p>
       </div>
-    </>
+    </div>
   );
 }
 

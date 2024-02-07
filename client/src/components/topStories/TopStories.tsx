@@ -21,11 +21,11 @@ function TopStories({ categoryId }: { categoryId: string }) {
   }, [categoryId]);
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-2">
       {stories.map((story: StoryI) => (
         <React.Fragment key={story._id}>
           <Card story={story} />
-          <Breaker type="under" />
+          {/* <Breaker type="under" /> */}
         </React.Fragment>
       ))}
     </div>
