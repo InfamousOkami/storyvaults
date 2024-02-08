@@ -117,19 +117,36 @@ const GetLinkIcon = (type: string) => {
 };
 
 function ProfileTopCard({ user }: { user: UserI }) {
+  const getRoleColor = (role: string) => {
+    switch (role) {
+      case "Admin":
+        return "text-red-600";
+      case "owner":
+        return "text-purple-600";
+      case "Editor":
+        return "text-green-500";
+      case "Writer":
+        return "text-teal-500";
+      default:
+        return "text-blue-600";
+    }
+  };
+
   return (
     <div>
       <div className="flex flex-col md:flex-row items-center">
         {/* Profile Picture */}
-        <div className="">
-          <div className="w-32 h-44 md:w-44 md:h-64 bg-blue-500 m-1" />
+        <div className="p-2">
+          <div className="w-32 h-32  rounded-full md:h-44 md:w-44 bg-blue-500 m-1 drop-shadow-sm shadow-md shadow-blue-500" />
         </div>
         <div className="flex-2">
           {/* Username & Role */}
           <div className="flex gap-2 items-center justify-center">
-            <h1 className="text-lg font-medium">{user.username}</h1>
+            <h1 className="text-2xl font-medium">{user.username}</h1>
             <Breaker type="between" />
-            <p>{user.role}</p>
+            <p className={`text-xl font-medium ${getRoleColor(user.role)}`}>
+              {user.role}
+            </p>
           </div>
 
           <Breaker type="under" />
@@ -141,7 +158,7 @@ function ProfileTopCard({ user }: { user: UserI }) {
       </div>
 
       {/* User Stats */}
-      <div className="flex gap-1 flex-wrap text-sm justify-center bg-blue-50">
+      <div className="flex gap-1 p-2 flex-wrap text-sm justify-center bg-gray-100">
         {/* TODO: Create Portal for followers and Followings webdebsimplified */}
         <p>Followers: {user.followers.length}</p>
         <Breaker type="between" />
@@ -156,7 +173,7 @@ function ProfileTopCard({ user }: { user: UserI }) {
 
       {/* User Links */}
       {user.externalLinks.length > 0 && (
-        <div className="flex flex-col items-center md:gap-1 ">
+        <div className="flex flex-col items-center md:gap-1 bg-gray-100 p-2">
           <p className="underline text-lg">Links</p>
           <div className="flex flex-wrap gap-3">
             {user.externalLinks.map((link) => (

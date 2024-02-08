@@ -40,7 +40,9 @@ function Card({ story }: { story: StoryI }) {
       <div className="flex gap-2 p-1 m-1">
         {/* Left flex - Image */}
         <div className=" flex-1 ">
-          <div className="w-24 h-36 rounded-lg md:w-32 md:h-44 bg-blue-500 drop-shadow-lg shadow-sm shadow-blue-600"></div>
+          <Link href={`/story/${story._id}`}>
+            <div className="w-24 h-36 rounded-lg md:w-32 md:h-44 bg-blue-500 drop-shadow-lg shadow-sm hover:shadow-lg shadow-blue-600 cursor-pointer"></div>
+          </Link>
         </div>
 
         {/* Right Flex - title, username, description */}
@@ -48,7 +50,7 @@ function Card({ story }: { story: StoryI }) {
           {/* Title & Username */}
           <div className="flex gap-2 text-md md:text-lg">
             <Link href={`/story/${story._id}`}>
-              <h1 className="underline">{story.title}</h1>
+              <h1 className="underline hover:text-blue-600">{story.title}</h1>
             </Link>
             <Link
               className="flex gap-1"

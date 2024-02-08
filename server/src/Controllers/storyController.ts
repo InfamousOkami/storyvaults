@@ -82,7 +82,7 @@ export const getUserStories = catchAsync(
     next: express.NextFunction
   ) => {
     const stories = await StoryModel.find({ userId: req.params.id }).populate(
-      `languageName genre userId`
+      `languageName genre userId category`
     );
 
     return res.status(200).json({
@@ -106,8 +106,8 @@ export const getTopStories = catchAsync(
     const { categoryId } = req.params;
     const stories = await StoryModel.find({ category: categoryId })
       .populate(`languageName genre userId category`)
-      .sort({ ratingsAverage: -1 })
-      .limit(5);
+      .sort({ "ratingsAverage.total": -1 })
+      .limit(6);
 
     return res.status(200).json({
       status: "Success",

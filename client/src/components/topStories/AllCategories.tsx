@@ -44,7 +44,7 @@ function AllCategories() {
         .map((cat: any) => (
           <div key={cat._id} className="w-full">
             <h1 className="font-bold text-2xl text-gray-700 text-center underline mb-3">
-              Top 5 {getCategoryName(cat.name)}
+              Top 6 {getCategoryName(cat.name)}
             </h1>
             <TopStories categoryId={cat._id} />
           </div>

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import Card from "../card/Card";
 import { StoryI } from "@/typings";
 import Breaker from "../breaker/Breaker";
+import CoolCard from "../card/coolCard";
 
 function TopStories({ categoryId }: { categoryId: string }) {
   const [stories, setStories] = useState([]);
@@ -21,11 +22,10 @@ function TopStories({ categoryId }: { categoryId: string }) {
   }, [categoryId]);
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col md:flex-row md:flex-wrap gap-2">
       {stories.map((story: StoryI) => (
         <React.Fragment key={story._id}>
-          <Card story={story} />
-          {/* <Breaker type="under" /> */}
+          <CoolCard story={story} />
         </React.Fragment>
       ))}
     </div>

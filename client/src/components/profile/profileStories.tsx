@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import LoadingPulse from "../loading/LoadingSpinner";
 import Breaker from "../breaker/Breaker";
 import Card from "../card/Card";
+import CoolCard from "../card/coolCard";
 
 enum StorySortOption {
   CREATED_AT = "createdAt",
@@ -99,11 +100,12 @@ function ProfileStories({ user }: { user: UserI }) {
   if (isLoading) return <LoadingPulse />;
 
   return (
-    <div className="bg-gray-50">
+    <div className="bg-gray-50 pt-2">
       <h1 className="text-lg font-medium underline text-gray-900 text-center ">
         {user.username}
         {"'"}s Stories
       </h1>
+
       <div className="text-center">
         <p className="text-lg underline mb-1">Sort By</p>
         <div className="flex gap-3 justify-center mb-2 flex-wrap">
@@ -120,14 +122,21 @@ function ProfileStories({ user }: { user: UserI }) {
           ))}
         </div>
       </div>
+      {stories.length === 0 && (
+        <>
+          <p className="text-center text-gray-700 text-xl font-bold p-5 m-2 bg-gray-100 rounded-lg h-fit">
+            No Stories
+          </p>
+        </>
+      )}
       <div
-        className="flex flex-col gap-3 justify-center w-full
+        className="flex flex-col md:flex-row md:flex-wrap gap-3 justify-center w-full
       "
       >
         {stories.sort(sortByField(sortBy)).map((story: StoryI) => (
           <React.Fragment key={story._id}>
-            <Card story={story} />
-            <Breaker type="under" />
+            {/* <Card story={story} /> */}
+            <CoolCard story={story} />
           </React.Fragment>
         ))}
       </div>
