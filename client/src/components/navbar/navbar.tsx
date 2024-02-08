@@ -57,24 +57,26 @@ function Navbar() {
     <div
       className={`bg-blue-600 w-full py-3 px-2 flex justify-between items-center shadow-sm shadow-blue-800 drop-shadow-lg`}
     >
-      {/* Logo */}
-      <div className="w-[140px]">
-        <p className="text-gray-50 font-bold text-2xl">
-          <Link href="/">
-            Story
-            <span className="text-blue-900">Vaults</span>
-          </Link>
-        </p>
-      </div>
+      <div className="flex gap-5">
+        <div className="w-[140px]">
+          <p className="text-gray-50 font-bold text-2xl">
+            <Link href="/">
+              Story
+              <span className="text-blue-900">Vaults</span>
+            </Link>
+          </p>
+        </div>
 
-      {/* pages */}
-      <div className="hidden md:flex gap-3 text-lg text-white ">
-        {mobileMenuLinks.map((link) => (
-          <Link key={link.name} href={link.link}>
-            <p className="hover:text-blue-950">{link.name}</p>
-          </Link>
-        ))}
+        {/* pages */}
+        <div className="hidden md:flex gap-3 text-lg text-white ">
+          {mobileMenuLinks.map((link) => (
+            <Link key={link.name} href={link.link}>
+              <p className="hover:text-gray-800">{link.name}</p>
+            </Link>
+          ))}
+        </div>
       </div>
+      {/* Logo */}
 
       {/* User Links */}
       {token ? (
