@@ -93,4 +93,22 @@ export interface CategoryI extends Document {
   name: string;
   description?: string;
   storyAmount: number;
+  _id: string;
+}
+
+export interface GenreI extends Document {
+  name: string;
+  _id: string;
+  storyAmount: {
+    total: number;
+    book: number;
+    oneShot: number;
+    lightNovel: number;
+  };
+}
+
+export interface LanguageI extends Document {
+  name: string;
+  storyAmount: number;
+  _id: string;
 }

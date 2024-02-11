@@ -136,7 +136,8 @@ function ProfileTopCard({ user }: { user: UserI }) {
     <div>
       <div className="flex flex-col md:flex-row items-center">
         {/* Profile Picture */}
-        <div className="p-2">
+        <div className="p-2 self-start">
+          {/* TODO: Change Div to Image For Profile Picture */}
           <div className="w-32 h-32  rounded-full md:h-44 md:w-44 bg-blue-500 m-1 drop-shadow-sm shadow-md shadow-blue-500" />
         </div>
         <div className="flex-2">
@@ -151,9 +152,13 @@ function ProfileTopCard({ user }: { user: UserI }) {
 
           <Breaker type="under" />
 
-          {/* Bio */}
-          <h2 className="text-center underline font-medium">Bio</h2>
-          <p className="py-1 px-2 w-full  text-xs md:text-base">{user.bio}</p>
+          <div className="flex flex-col w-[98%] items-center py-2">
+            {/* Bio */}
+            <h2 className="text-center underline font-medium text-xl">Bio</h2>
+            <p className="py-1 px-2 w-full border-x border-gray-200  text-base leading-5 md:text-lg">
+              {user.bio}
+            </p>
+          </div>
         </div>
       </div>
 

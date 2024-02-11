@@ -2,10 +2,10 @@
 
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import Card from "../card/Card";
+import Card from "../card/DetailedCard";
 import { StoryI } from "@/typings";
 import Breaker from "../breaker/Breaker";
-import CoolCard from "../card/coolCard";
+import SimpleCard from "../card/SimpleCard";
 
 function TopStories({ categoryId }: { categoryId: string }) {
   const [stories, setStories] = useState([]);
@@ -25,7 +25,7 @@ function TopStories({ categoryId }: { categoryId: string }) {
     <div className="flex flex-col md:flex-row md:flex-wrap gap-2">
       {stories.map((story: StoryI) => (
         <React.Fragment key={story._id}>
-          <CoolCard story={story} />
+          <SimpleCard story={story} />
         </React.Fragment>
       ))}
     </div>

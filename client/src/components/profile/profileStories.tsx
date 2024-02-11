@@ -4,9 +4,7 @@ import { StoryI, UserI } from "@/typings";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import LoadingPulse from "../loading/LoadingSpinner";
-import Breaker from "../breaker/Breaker";
-import Card from "../card/Card";
-import CoolCard from "../card/coolCard";
+import SimpleCard from "../card/SimpleCard";
 
 enum StorySortOption {
   CREATED_AT = "createdAt",
@@ -15,6 +13,7 @@ enum StorySortOption {
   GENRE = "genre",
   CHAPTER_AMOUNT = "chapterAmount",
   RATING = "ratingsAverage.total",
+  Price = "price",
 }
 
 const sortButtons = [
@@ -42,6 +41,10 @@ const sortButtons = [
     name: "Rating",
     option: StorySortOption.RATING,
   },
+  {
+    name: "Price",
+    option: StorySortOption.Price,
+  },
 ];
 
 function ProfileStories({ user }: { user: UserI }) {
@@ -50,6 +53,7 @@ function ProfileStories({ user }: { user: UserI }) {
   const [sortBy, setSortBy] = useState<StorySortOption>(
     StorySortOption.CREATED_AT
   );
+
   const getStories = async (userId: string) => {
     const stories = await axios.get(
       `http://localhost:8080/api/v1/stories/user/${userId}`
@@ -130,13 +134,12 @@ function ProfileStories({ user }: { user: UserI }) {
         </>
       )}
       <div
-        className="flex flex-col md:flex-row md:flex-wrap gap-3 justify-center w-full
+        className="flex flex-col md:flex-row md:flex-wrap gap-3 justify-center w-full px-1
       "
       >
         {stories.sort(sortByField(sortBy)).map((story: StoryI) => (
           <React.Fragment key={story._id}>
-            {/* <Card story={story} /> */}
-            <CoolCard story={story} />
+            <SimpleCard story={story} />
           </React.Fragment>
         ))}
       </div>
