@@ -1,3 +1,11 @@
+import Filter from "@/components/filter/Filter";
+import AllStories from "@/components/stories/Stories";
+
 export default function Stories() {
-  return <div className="flex flex-col gap-5  items-center">Stories</div>;
+  return (
+    <>
+      <Filter />
+      <AllStories />
+    </>
+  );
 }

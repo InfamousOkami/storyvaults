@@ -41,7 +41,11 @@ export const getAllStories = catchAsync(
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
     let query = StoryModel.find(JSON.parse(queryStr)).populate(
-      `languageName genre userId`
+      `languageName genre userId category`
+    );
+
+    let PaginationQuery = StoryModel.find(JSON.parse(queryStr)).populate(
+      `languageName genre userId category`
     );
 
     if (req.query.sort) {
@@ -54,22 +58,37 @@ export const getAllStories = catchAsync(
           : 1;
 
       query = query.sort({ [sortBy]: sortOrder });
+      PaginationQuery = PaginationQuery.sort({ [sortBy]: sortOrder });
     } else if (req.query.keywords) {
       query = query.sort({
         description: { $meta: "textScore" },
         title: { $meta: "textScore" },
       });
+      PaginationQuery = PaginationQuery.sort({
+        description: { $meta: "textScore" },
+        title: { $meta: "textScore" },
+      });
+    } else {
+      query = query.sort({ updatedAt: -1 });
+      PaginationQuery = PaginationQuery.sort({ updatedAt: -1 });
     }
 
-    const stories = await query;
+    let total = 0;
+    const allStories = await PaginationQuery;
+    total = allStories.length;
 
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 30;
+    const skip = (page - 1) * limit;
+    query = query.skip(skip).limit(limit);
+
+    const stories = await query.populate(`languageName genre userId category`);
     return res.status(200).json({
       status: "Success",
-      results: stories.length,
       data: stories,
       pagination: {
-        total: stories.length,
-        pages: Math.ceil(stories.length / 25),
+        totalStories: total,
+        pages: Math.ceil(total / Number(req.query.limit)),
       },
     });
   }
