@@ -16,6 +16,7 @@ function MobileMenu({ setProfileMenuOpen, profileMenuOpen, closeMenus }: any) {
           className={`${linkStyles} py-1 border-b-2 border-blue-900 flex gap-1 justify-center items-center`}
           onClick={() => setProfileMenuOpen(!profileMenuOpen)}
         >
+          {/* TODO: Change Div to Image For Profile Picture */}
           <div className="rounded-full bg-black w-8 h-8 " />
           <p>{user.username}</p>
         </div>

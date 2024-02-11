@@ -76,7 +76,6 @@ function Navbar() {
           ))}
         </div>
       </div>
-      {/* Logo */}
 
       {/* User Links */}
       {token ? (
@@ -85,6 +84,7 @@ function Navbar() {
             className="hidden md:flex justify-end items-center gap-2 w-[140px] cursor-pointer"
             onClick={toggleProfileMenu}
           >
+            {/* TODO: Change Div to Image For Profile Picture */}
             <div className="rounded-full bg-black w-8 h-8 " />
             <p className="text-white">{user.username}</p>
           </div>
