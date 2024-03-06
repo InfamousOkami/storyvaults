@@ -1,29 +1,40 @@
-"use client";
-import Link from "next/link";
-import { mobileMenuLinks } from "./menuLinks";
-import { useAppSelector } from "@/lib/redux/store";
+'use client'
+import Link from 'next/link'
+import { mobileMenuLinks } from './menuLinks'
+import { useAppSelector } from '@/lib/redux/store'
+import Image from 'next/image'
 
-const linkStyles = `py-2 px-3 hover:bg-blue-800 bg-blue-700 cursor-pointer`;
+const linkStyles = `py-2 px-3 hover:bg-blue-800 bg-blue-700 cursor-pointer`
 
 function MobileMenu({ setProfileMenuOpen, profileMenuOpen, closeMenus }: any) {
-  const token = useAppSelector((state) => state.token);
-  const user = useAppSelector((state) => state.user);
+  const token = useAppSelector((state) => state.auth.token)
+  const user = useAppSelector((state) => state.auth.user)
 
   return (
-    <div className={`${profileMenuOpen ? "border-l-2 border-blue-900" : ""}`}>
+    <div
+      className={`z-[5000] ${profileMenuOpen ? 'border-l-2 border-blue-900' : ''}`}
+    >
       {token ? (
         <div
-          className={`${linkStyles} py-1 border-b-2 border-blue-900 flex gap-1 justify-center items-center`}
+          className={`${linkStyles} flex items-center justify-center gap-1 border-b-2 border-blue-900 py-1`}
           onClick={() => setProfileMenuOpen(!profileMenuOpen)}
         >
-          {/* TODO: Change Div to Image For Profile Picture */}
-          <div className="rounded-full bg-black w-8 h-8 " />
+          <div className="h-8 w-8 overflow-hidden rounded-full  ">
+            <Image
+              width={32}
+              height={32}
+              src={`
+                  ${user.picturePath !== 'default.webp' ? `http://localhost:8080/assets/${user.username}/${user.picturePath}` : `http://localhost:8080/assets/${user.picturePath}`}
+                  `}
+              alt={user.username}
+            />
+          </div>
           <p>{user.username}</p>
         </div>
       ) : (
         <Link href="/login">
           <p
-            className={`py-2 px-3 hover:bg-blue-800 bg-blue-700 cursor-pointer border-b-2 border-blue-900 `}
+            className={`cursor-pointer border-b-2 border-blue-900 bg-blue-700 px-3 py-2 hover:bg-blue-800 `}
           >
             Log In
           </p>
@@ -43,7 +54,7 @@ function MobileMenu({ setProfileMenuOpen, profileMenuOpen, closeMenus }: any) {
         </Link>
       ))}
     </div>
-  );
+  )
 }
 
-export default MobileMenu;
+export default MobileMenu
