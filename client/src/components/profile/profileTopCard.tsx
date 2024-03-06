@@ -1,11 +1,12 @@
-import { UserI } from "@/typings";
-import Link from "next/link";
-import React from "react";
-import Breaker from "../breaker/Breaker";
+import { UserI } from '@/typings'
+import Link from 'next/link'
+import React from 'react'
+import Breaker from '../breaker/Breaker'
+import Image from 'next/image'
 
 const GetLinkIcon = (type: string) => {
   switch (type) {
-    case "youtube":
+    case 'youtube':
       return (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -26,8 +27,8 @@ const GetLinkIcon = (type: string) => {
             fill="currentColor"
           />
         </svg>
-      );
-    case "instagram":
+      )
+    case 'instagram':
       return (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -46,8 +47,8 @@ const GetLinkIcon = (type: string) => {
           <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
           <path d="M16.5 7.5l0 .01" />
         </svg>
-      );
-    case "linktree":
+      )
+    case 'linktree':
       return (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -68,8 +69,8 @@ const GetLinkIcon = (type: string) => {
           <path d="M12 10v-8" />
           <path d="M12 15v7" />
         </svg>
-      );
-    case "twitter":
+      )
+    case 'twitter':
       return (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -90,7 +91,7 @@ const GetLinkIcon = (type: string) => {
             fill="currentColor"
           />
         </svg>
-      );
+      )
     default:
       return (
         <svg
@@ -112,37 +113,46 @@ const GetLinkIcon = (type: string) => {
           <path d="M11.5 3a17 17 0 0 0 0 18" />
           <path d="M12.5 3a17 17 0 0 1 0 18" />
         </svg>
-      );
+      )
   }
-};
+}
 
 function ProfileTopCard({ user }: { user: UserI }) {
   const getRoleColor = (role: string) => {
     switch (role) {
-      case "Admin":
-        return "text-red-600";
-      case "owner":
-        return "text-purple-600";
-      case "Editor":
-        return "text-green-500";
-      case "Writer":
-        return "text-teal-500";
+      case 'Admin':
+        return 'text-red-600'
+      case 'owner':
+        return 'text-purple-600'
+      case 'Editor':
+        return 'text-green-500'
+      case 'Writer':
+        return 'text-teal-500'
       default:
-        return "text-blue-600";
+        return 'text-blue-600'
     }
-  };
+  }
 
   return (
     <div>
-      <div className="flex flex-col md:flex-row items-center">
+      <div className="flex flex-col items-center md:flex-row">
         {/* Profile Picture */}
-        <div className="p-2 self-start">
-          {/* TODO: Change Div to Image For Profile Picture */}
-          <div className="w-32 h-32  rounded-full md:h-44 md:w-44 bg-blue-500 m-1 drop-shadow-sm shadow-md shadow-blue-500" />
+        <div className="self-center p-2 md:self-start">
+          <div className="m-1 h-32  w-32 overflow-hidden rounded-full border-2 border-gray-400  md:h-44 md:w-44">
+            <Image
+              width={5000}
+              height={5000}
+              // fill
+              src={`
+                  ${user.picturePath !== 'default.webp' ? `http://localhost:8080/assets/${user.username}/${user.picturePath}` : `http://localhost:8080/assets/${user.picturePath}`}
+                  `}
+              alt={user.username}
+            />
+          </div>
         </div>
         <div className="flex-2">
           {/* Username & Role */}
-          <div className="flex gap-2 items-center justify-center">
+          <div className="flex items-center justify-center gap-2">
             <h1 className="text-2xl font-medium">{user.username}</h1>
             <Breaker type="between" />
             <p className={`text-xl font-medium ${getRoleColor(user.role)}`}>
@@ -152,10 +162,10 @@ function ProfileTopCard({ user }: { user: UserI }) {
 
           <Breaker type="under" />
 
-          <div className="flex flex-col w-[98%] items-center py-2">
+          <div className="flex w-[98%] flex-col items-center py-2">
             {/* Bio */}
-            <h2 className="text-center underline font-medium text-xl">Bio</h2>
-            <p className="py-1 px-2 w-full border-x border-gray-200  text-base leading-5 md:text-lg">
+            <h2 className="text-center text-xl font-medium underline">Bio</h2>
+            <p className="w-full border-x border-gray-200 px-2 py-1  text-base leading-5 md:text-lg">
               {user.bio}
             </p>
           </div>
@@ -163,7 +173,7 @@ function ProfileTopCard({ user }: { user: UserI }) {
       </div>
 
       {/* User Stats */}
-      <div className="flex gap-1 p-2 flex-wrap text-sm justify-center bg-gray-100">
+      <div className="flex flex-wrap justify-center gap-1 bg-gray-100 p-2 text-sm">
         {/* TODO: Create Portal for followers and Followings webdebsimplified */}
         <p>Followers: {user.followers.length}</p>
         <Breaker type="between" />
@@ -178,20 +188,20 @@ function ProfileTopCard({ user }: { user: UserI }) {
 
       {/* User Links */}
       {user.externalLinks.length > 0 && (
-        <div className="flex flex-col items-center md:gap-1 bg-gray-100 p-2">
-          <p className="underline text-lg">Links</p>
+        <div className="flex flex-col items-center bg-gray-100 p-2 md:gap-1">
+          <p className="text-lg underline">Links</p>
           <div className="flex flex-wrap gap-3">
             {user.externalLinks.map((link) => (
               <Link
                 key={link.href}
                 href={
-                  link.href.startsWith("http")
+                  link.href.startsWith('http')
                     ? link.href
                     : `https://${link.href}`
                 }
                 rel="noopener noreferrer"
                 target="_blank"
-                className="flex gap-1 items-center"
+                className="flex items-center gap-1"
               >
                 <div>{GetLinkIcon(link.type)}</div>
                 <p className="hover:text-blue-600">{link.type}</p>
@@ -201,7 +211,7 @@ function ProfileTopCard({ user }: { user: UserI }) {
         </div>
       )}
     </div>
-  );
+  )
 }
 
-export default ProfileTopCard;
+export default ProfileTopCard
