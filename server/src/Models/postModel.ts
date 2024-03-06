@@ -3,6 +3,9 @@ import mongoose, { Document } from "mongoose";
 export interface PostI extends Document {
   userId: mongoose.Schema.Types.ObjectId;
   subject: string;
+  backgroundColor: string;
+  textColor: string;
+  borderColor: string;
   postContent: string;
   likes: Map<mongoose.Schema.Types.ObjectId, boolean>;
   createdAt: Date;
@@ -19,6 +22,9 @@ const PostSchema = new mongoose.Schema({
     type: String,
     maxlength: 100,
   },
+  backgroundColor: { type: String, default: "#ffffff" },
+  textColor: { type: String, default: "#000000" },
+  borderColor: { type: String, default: "#000000" },
   postContent: {
     type: String,
     required: true,

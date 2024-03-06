@@ -1,63 +1,47 @@
 import mongoose, { Document } from "mongoose";
 
-export interface ChapterI extends Document {
+export interface VaultI extends Document {
   name: string;
-  chapterNumber: number;
-  storyId: mongoose.Schema.Types.ObjectId;
-  userId: mongoose.Schema.Types.ObjectId;
-  chapterContent: string;
-  chapterContentWords: string;
-  wordCount: number;
+  description: string;
+  userId: string;
+  followers: string[];
+  stories: string[];
+  favorites: Map<string, boolean>;
+  picturePath?: string;
+  pictureName?: string;
   createdAt: Date;
   updatedAt: Date;
-  needEditing: boolean;
-  price: number;
-  likes: Map<mongoose.Schema.Types.ObjectId, boolean>;
 }
 
-const ChapterSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "You must provide a chapter name"],
-  },
-  chapterNumber: {
-    type: Number,
-    default: 1,
-  },
-  price: {
-    type: Number,
-    default: 0,
-  },
-  storyId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "StoryModel",
-    required: true,
-  },
+const VaultSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "UserModel",
-    required: true,
+    required: [true, "You must be logged in"],
   },
-  needEditing: {
-    type: Boolean,
-    default: false,
-  },
-  chapterContent: {
+  name: {
     type: String,
-    required: [true, "You must provide content to the chapter"],
+    required: [true, "Vault must have a name"],
   },
-  chapterContentWords: {
+  description: {
     type: String,
+    required: [true, "Must have a description"],
   },
-  wordCount: {
-    type: Number,
-    default: 0,
+  stories: {
+    type: Array,
+    default: [],
   },
-  likes: {
+  followers: {
+    type: Array,
+    default: [],
+  },
+  favorites: {
     type: Map,
     of: Boolean,
     default: new Map(),
   },
+  picturePath: String,
+  pictureName: String,
   createdAt: {
     type: Date,
     default: Date.now,
@@ -120,8 +104,8 @@ const ChapterSchema = new mongoose.Schema({
   },
 });
 
-ChapterSchema.set("toJSON", { getters: true });
+VaultSchema.set("toJSON", { getters: true });
 
-const ChapterModel = mongoose.model("ChapterModel", ChapterSchema);
+const VaultModel = mongoose.model("VaultModel", VaultSchema);
 
-export default ChapterModel;
+export default VaultModel;

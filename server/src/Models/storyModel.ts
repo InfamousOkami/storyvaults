@@ -17,8 +17,16 @@ export interface StoryI extends Document {
   editorId?: mongoose.Schema.Types.ObjectId | null;
   editorRequestStatus: editorRequestT;
   picturePath?: string;
+  pictureName?: string;
   status: statusT;
-  ratingsAverage: number;
+  nsfw: boolean;
+  ratingsAverage: {
+    total: number;
+    monthlyCount: number;
+    weeklyCount: number;
+    lastMonthlyUpdated: Date;
+    lastWeeklyUpdated: Date;
+  };
   languageName: mongoose.Schema.Types.ObjectId;
   genre: mongoose.Schema.Types.ObjectId;
   chapterAmount: number;
@@ -27,13 +35,17 @@ export interface StoryI extends Document {
   bookmarkAmount: {
     total: number;
     monthlyCount: number;
-    lastUpdated: Date;
+    weeklyCount: number;
+    lastMonthlyUpdated: Date;
+    lastWeekUpdated: Date;
   };
-  favorites: Map<mongoose.Schema.Types.ObjectId, boolean>;
+  favorites: Map<string, boolean>;
   favoriteAmount: {
     total: number;
     monthlyCount: number;
-    lastUpdated: Date;
+    weeklyCount: number;
+    lastMonthUpdated: Date;
+    lastWeekUpdated: Date;
   };
   createdAt: Date;
   updatedAt: Date;
@@ -85,7 +97,14 @@ const StorySchema = new mongoose.Schema({
     enum: ["Declined", "Accepted", "Pending", "None"],
     default: "None",
   },
-  picturePath: String,
+  picturePath: {
+    type: String,
+    default: "",
+  },
+  pictureName: {
+    type: String,
+    default: "",
+  },
   status: {
     type: String,
     required: [true, "You must provide a status"],
@@ -107,7 +126,15 @@ const StorySchema = new mongoose.Schema({
       max: 5,
       set: (val: number) => Math.round(val * 10) / 10,
     },
-    lastUpdated: { type: Date, default: Date.now() },
+    weeklyCount: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 5,
+      set: (val: number) => Math.round(val * 10) / 10,
+    },
+    lastMonthlyUpdated: { type: Date, default: Date.now() },
+    lastWeeklyUpdated: { type: Date, default: Date.now() },
   },
   languageName: {
     type: mongoose.Schema.Types.ObjectId,
@@ -134,9 +161,11 @@ const StorySchema = new mongoose.Schema({
   bookmarkAmount: {
     total: { type: Number, default: 0 },
     monthlyCount: { type: Number, default: 0 },
-    lastUpdated: { type: Date, default: Date.now() },
+    weeklyCount: { type: Number, default: 0 },
+    lastMonthUpdated: { type: Date, default: Date.now() },
+    lastWeekUpdated: { type: Date, default: Date.now() },
   },
-  favotites: {
+  favorites: {
     type: Map,
     of: Boolean,
     default: new Map(),
@@ -144,7 +173,13 @@ const StorySchema = new mongoose.Schema({
   favoriteAmount: {
     total: { type: Number, default: 0 },
     monthlyCount: { type: Number, default: 0 },
-    lastUpdated: { type: Date, default: Date.now() },
+    weeklyCount: { type: Number, default: 0 },
+    lastMonthUpdated: { type: Date, default: Date.now() },
+    lastWeekUpdated: { type: Date, default: Date.now() },
+  },
+  nsfw: {
+    type: Boolean,
+    default: false,
   },
   createdAt: {
     type: Date,
@@ -225,6 +260,13 @@ StorySchema.pre("save", function (next) {
 
   // Generates Slug
   this.slug = slugify(this.title, { lower: true });
+  next();
+});
+
+StorySchema.pre(/^find/, function (this: any, next: () => void) {
+  // Current query only finds users that are active
+  this.find({ active: true });
+
   next();
 });
 

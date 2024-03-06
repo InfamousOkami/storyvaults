@@ -56,7 +56,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    maxlength: 20,
+    maxlength: 25,
     validate: {
       validator: async function (value: string): Promise<boolean> {
         // Check for uniqueness case-insensitively
@@ -95,7 +95,7 @@ const UserSchema = new mongoose.Schema({
       message: "Passwords do not match",
     },
   },
-  picturePath: { type: String, default: "default.png" },
+  picturePath: { type: String, default: "default.webp" },
   bio: { type: String, default: "" },
   role: {
     type: String,

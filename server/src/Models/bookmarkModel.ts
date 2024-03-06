@@ -1,62 +1,32 @@
 import mongoose, { Document } from "mongoose";
 
-export interface ChapterI extends Document {
-  name: string;
+export interface BookmarkI extends Document {
+  storyId: string;
+  userId: string;
+  authorUsername: string;
   chapterNumber: number;
-  storyId: mongoose.Schema.Types.ObjectId;
-  userId: mongoose.Schema.Types.ObjectId;
-  chapterContent: string;
-  chapterContentWords: string;
-  wordCount: number;
   createdAt: Date;
   updatedAt: Date;
-  needEditing: boolean;
-  price: number;
-  likes: Map<mongoose.Schema.Types.ObjectId, boolean>;
 }
 
-const ChapterSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "You must provide a chapter name"],
-  },
-  chapterNumber: {
-    type: Number,
-    default: 1,
-  },
-  price: {
-    type: Number,
-    default: 0,
-  },
+const BookmarkSchema = new mongoose.Schema({
   storyId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "StoryModel",
-    required: true,
+    required: [true, "Must have a story"],
+  },
+  authorUsername: {
+    type: String,
+    required: [true, "Must have a username"],
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "UserModel",
-    required: true,
+    required: [true, "Must have a user"],
   },
-  needEditing: {
-    type: Boolean,
-    default: false,
-  },
-  chapterContent: {
-    type: String,
-    required: [true, "You must provide content to the chapter"],
-  },
-  chapterContentWords: {
-    type: String,
-  },
-  wordCount: {
+  chapterNumber: {
     type: Number,
     default: 0,
-  },
-  likes: {
-    type: Map,
-    of: Boolean,
-    default: new Map(),
   },
   createdAt: {
     type: Date,
@@ -120,8 +90,8 @@ const ChapterSchema = new mongoose.Schema({
   },
 });
 
-ChapterSchema.set("toJSON", { getters: true });
+BookmarkSchema.index({ userId: 1, storyId: 1 }, { unique: true });
 
-const ChapterModel = mongoose.model("ChapterModel", ChapterSchema);
+const BookmarkModel = mongoose.model("BookmarkModel", BookmarkSchema);
 
-export default ChapterModel;
+export default BookmarkModel;
