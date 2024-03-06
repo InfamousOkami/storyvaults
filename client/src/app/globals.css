@@ -40,3 +40,20 @@
 .font-outline-4 {
   -webkit-text-stroke: 4px black;
 }
+
+.scroller::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scroller::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: rgb(233, 232, 232);
+}
+
+.scroller::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background-color: rgb(37, 99, 235);
+  border-radius: 20px;
+  border: 1px solid rgb(70, 119, 224);
+}
