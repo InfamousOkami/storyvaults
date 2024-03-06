@@ -57,9 +57,7 @@ export const getGenre = catchAsync(
 
     return res.status(200).json({
       status: "Success",
-      data: {
-        genre,
-      },
+      data: genre,
     });
   }
 );

@@ -9,6 +9,9 @@ import LanguageModel from "../Models/languageModel";
 import GenreModel from "../Models/genreModel";
 import ChapterModel from "../Models/chapterModel";
 
+import fs from "fs";
+import { UserModel } from "../Models/userModel";
+
 // Get Stories
 export const getAllStories = catchAsync(
   async (
@@ -58,19 +61,13 @@ export const getAllStories = catchAsync(
           : 1;
 
       query = query.sort({ [sortBy]: sortOrder });
-      PaginationQuery = PaginationQuery.sort({ [sortBy]: sortOrder });
     } else if (req.query.keywords) {
       query = query.sort({
         description: { $meta: "textScore" },
         title: { $meta: "textScore" },
       });
-      PaginationQuery = PaginationQuery.sort({
-        description: { $meta: "textScore" },
-        title: { $meta: "textScore" },
-      });
     } else {
       query = query.sort({ updatedAt: -1 });
-      PaginationQuery = PaginationQuery.sort({ updatedAt: -1 });
     }
 
     let total = 0;
@@ -83,12 +80,13 @@ export const getAllStories = catchAsync(
     query = query.skip(skip).limit(limit);
 
     const stories = await query.populate(`languageName genre userId category`);
+
     return res.status(200).json({
       status: "Success",
       data: stories,
       pagination: {
         totalStories: total,
-        pages: Math.ceil(total / Number(req.query.limit)),
+        pages: Math.ceil(total / Number(limit)),
       },
     });
   }
@@ -100,9 +98,10 @@ export const getUserStories = catchAsync(
     res: express.Response,
     next: express.NextFunction
   ) => {
-    const stories = await StoryModel.find({ userId: req.params.id }).populate(
-      `languageName genre userId category`
-    );
+    console.log(req.query);
+    const stories = await StoryModel.find({ userId: req.params.id })
+      .populate(`languageName genre userId category`)
+      .sort({ [req.query.sort as string]: -1 });
 
     return res.status(200).json({
       status: "Success",
@@ -116,6 +115,24 @@ export const getUserStories = catchAsync(
   }
 );
 
+export const getTopThirteenStories = catchAsync(
+  async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const stories = await StoryModel.find({ nsfw: false })
+      .populate(`languageName genre userId category`)
+      .sort({ "ratingsAverage.weeklyCount": -1 })
+      .limit(13);
+
+    return res.status(200).json({
+      status: "Success",
+      data: stories,
+    });
+  }
+);
+
 export const getTopStories = catchAsync(
   async (
     req: express.Request,
@@ -123,10 +140,64 @@ export const getTopStories = catchAsync(
     next: express.NextFunction
   ) => {
     const { categoryId } = req.params;
-    const stories = await StoryModel.find({ category: categoryId })
+    const stories = await StoryModel.find({ category: categoryId, nsfw: false })
       .populate(`languageName genre userId category`)
       .sort({ "ratingsAverage.total": -1 })
       .limit(6);
+
+    return res.status(200).json({
+      status: "Success",
+      results: stories.length,
+      data: stories,
+      pagination: {
+        total: stories.length,
+        pages: Math.ceil(stories.length / 25),
+      },
+    });
+  }
+);
+
+export const getTopGenreStories = catchAsync(
+  async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const { genreId } = req.params;
+    const stories = await StoryModel.find({ genre: genreId, nsfw: false })
+      .populate(`languageName genre userId category`)
+      .sort({ "ratingsAverage.total": -1 })
+      .limit(3);
+
+    return res.status(200).json({
+      status: "Success",
+      data: stories,
+    });
+  }
+);
+
+export const getTopStoriesScroller = catchAsync(
+  async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const { categoryId, fieldType, timeType } = req.params;
+
+    const searchQuery = `${fieldType}.${timeType}`;
+
+    console.log(searchQuery);
+
+    const query: { [key: string]: any } = {
+      category: categoryId,
+      nsfw: false,
+    };
+    query[searchQuery] = { $gt: 0 };
+
+    const stories = await StoryModel.find(query)
+      .populate(`languageName genre userId category`)
+      .sort({ [searchQuery]: -1 })
+      .limit(5);
 
     return res.status(200).json({
       status: "Success",
@@ -152,8 +223,6 @@ export const getStory = catchAsync(
 
     let storyQuery = StoryModel.findById(req.params.id);
 
-    console.log(storyQuery);
-
     // Check if editorId exists in the request params
     if (story?.editorId) {
       populateFields += " editorId";
@@ -169,9 +238,7 @@ export const getStory = catchAsync(
 
     return res.status(200).json({
       status: "Success",
-      data: {
-        story,
-      },
+      data: story,
     });
   }
 );
@@ -183,9 +250,12 @@ export const createStory = catchAsync(
     res: express.Response,
     next: express.NextFunction
   ) => {
+    console.log(req.body);
     const newStory = await StoryModel.create({
       ...req.body,
       userId: req.user.id,
+      editorId: req.body.editorId !== "" ? req.body.editorId : null,
+      editorRequestStatus: req.body.editorId !== "" ? "Pending" : "None",
     });
 
     const category = await CategoryModel.findById(newStory.category);
@@ -240,9 +310,19 @@ export const updateStory = catchAsync(
     res: express.Response,
     next: express.NextFunction
   ) => {
+    // TODO: If picture is updated delete old picture and update picure path and name
     const { id } = req.params;
 
+    console.log(req.body);
+
     const story: StoryI | null = await StoryModel.findById(id);
+
+    if (story?.picturePath !== req.body.picturePath) {
+      fs.unlink(
+        `../../public/assets/${req.user.username}/${story?.picturePath}`,
+        () => console.log("file deleted")
+      );
+    }
 
     const oldCategoryName = await CategoryModel.findById(story?.category);
 
@@ -264,12 +344,20 @@ export const updateStory = catchAsync(
 
     const updatedStory = await StoryModel.findByIdAndUpdate(
       id,
-      { ...req.body, updatedAt: Date.now() },
+      {
+        ...req.body,
+        editorId: req.body.editorId === "" ? null : req.body.editorId,
+        editorRequestStatus:
+          story!.editorId === null && req.body.editoriId !== ""
+            ? "Pending"
+            : story?.editorRequestStatus,
+        updatedAt: Date.now(),
+      },
       {
         new: true,
         runValidators: true,
       }
-    );
+    ).populate(`category languageName genre userId`);
 
     if (
       story?.readerAccess !== "free" &&
@@ -346,9 +434,6 @@ export const updateStory = catchAsync(
         updatedStory?.languageName
       );
 
-      console.log(oldLanguage);
-      console.log(newLanguage);
-
       await LanguageModel.findByIdAndUpdate(oldLanguage?.id, {
         storyAmount: oldLanguage!.storyAmount - 1,
       });
@@ -386,6 +471,68 @@ export const updateStory = catchAsync(
       data: {
         story: updatedStory,
       },
+    });
+  }
+);
+
+export const FavoriteStory = catchAsync(
+  async (
+    req: CustomRequest,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const { id } = req.params;
+    const userId = req.user._id;
+    const story: StoryI | null = await StoryModel.findById(id);
+    const user = await UserModel.findById(userId);
+
+    console.log(id);
+    console.log(userId);
+
+    const isFavorited = story?.favorites.get(userId);
+
+    if (isFavorited) {
+      story!.favorites.delete(userId);
+
+      user!.favoritedStories = user!.favoritedStories.filter(
+        (s) => s.toString() !== story!._id.toString()
+      );
+
+      story!.favoriteAmount.total = story!.favorites.size;
+
+      story!.favoriteAmount.weeklyCount -= 1;
+
+      story!.favoriteAmount.monthlyCount -= 1;
+    } else {
+      story?.favorites.set(userId, true);
+
+      user!.favoritedStories.push(story!._id);
+
+      story!.favoriteAmount.total = story!.favorites.size;
+
+      story!.favoriteAmount.weeklyCount += 1;
+
+      story!.favoriteAmount.monthlyCount += 1;
+    }
+
+    const updatedStory = await StoryModel.findByIdAndUpdate(
+      id,
+      {
+        favorites: story?.favorites,
+        favoriteAmount: {
+          total: story!.favoriteAmount.total,
+          weeklyCount: story!.favoriteAmount.weeklyCount,
+          monthlyCount: story!.favoriteAmount.monthlyCount,
+        },
+      },
+      { new: true }
+    );
+
+    user!.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+      status: "Success",
+      data: updatedStory,
     });
   }
 );

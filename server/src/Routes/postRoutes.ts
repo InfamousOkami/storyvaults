@@ -7,6 +7,7 @@ import {
   deletePost,
   getAllPosts,
   getAllPostsByUser,
+  getLastThreePosts,
   getPost,
   updatePost,
 } from "../Controllers/postController";
@@ -15,6 +16,7 @@ const router = express.Router();
 
 // Gets
 router.get("/", getAllPosts);
+router.get("/latest/three", getLastThreePosts);
 router.get("/all/:userId", getAllPostsByUser);
 router.get("/:id", getPost);
 

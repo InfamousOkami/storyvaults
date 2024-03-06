@@ -7,6 +7,7 @@ import {
   deleteChapter,
   getAllChapters,
   getChapter,
+  getStoryChapters,
   updateChapter,
 } from "../Controllers/chapterContorller";
 
@@ -14,7 +15,8 @@ const router = express.Router();
 
 // Gets
 router.get("/", getAllChapters);
-router.get("/:id", getChapter);
+router.get("/story/:storyId", getStoryChapters);
+router.get("/:storyId/:chapterNumber", getChapter);
 
 // Create
 router.post(

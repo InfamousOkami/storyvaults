@@ -7,11 +7,14 @@ import { CustomRequest } from "../../typings";
 // Create Post
 export const createPost = catchAsync(
   async (
-    req: express.Request,
+    req: CustomRequest,
     res: express.Response,
     next: express.NextFunction
   ) => {
-    const newPost = await PostModel.create(req.body);
+    const newPost = await PostModel.create({
+      ...req.body,
+      userId: req.user._id,
+    });
 
     res.status(200).json({
       status: "Success",
@@ -30,6 +33,29 @@ export const getAllPosts = catchAsync(
     next: express.NextFunction
   ) => {
     const posts = await PostModel.find();
+
+    return res.status(200).json({
+      status: "Success",
+      results: posts.length,
+      data: posts,
+      pagination: {
+        total: posts.length,
+        pages: Math.ceil(posts.length / 25),
+      },
+    });
+  }
+);
+
+export const getLastThreePosts = catchAsync(
+  async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const posts = await PostModel.find()
+      .sort({ createdAt: -1 })
+      .limit(3)
+      .populate("userId");
 
     return res.status(200).json({
       status: "Success",
