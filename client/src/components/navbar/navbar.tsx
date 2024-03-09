@@ -89,8 +89,6 @@ function Navbar() {
     setProfileMenuOpen(!profileMenuOpen)
   }
 
-  // TODO: Add Bookmark list button
-
   return (
     <div
       className={`relative z-[500] flex w-full items-center justify-between bg-blue-600 px-2 py-3 shadow-sm shadow-blue-800 drop-shadow-lg`}

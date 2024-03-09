@@ -53,7 +53,7 @@ const initialState = {
   bookmarks: [],
 } as InitialStateT
 
-// TODO: Add User stories, editor stories
+// TODO: Add User stories, editor stories using useContext
 
 export const auth = createSlice({
   name: 'auth',

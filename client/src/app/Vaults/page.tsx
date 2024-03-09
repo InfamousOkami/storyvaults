@@ -1,5 +1,11 @@
+import AllVaults from '@/components/vaults/searchVaults/AllVaults'
+
 function Vaults() {
-  return <div className="flex flex-col gap-5  items-center">Vaults</div>;
+  return (
+    <div className=" items-center">
+      <AllVaults />
+    </div>
+  )
 }
 
-export default Vaults;
+export default Vaults

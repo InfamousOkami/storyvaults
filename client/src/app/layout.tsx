@@ -5,6 +5,7 @@ import Navbar from '@/components/navbar/navbar'
 import React from 'react'
 import { VaultI } from '@/typings'
 import { VaultsProvider } from '@/lib/VaultProvider'
+import { StoryProvider } from '@/lib/StoryProvider'
 
 export const metadata: Metadata = {
   title: 'Story Vaults: Create Your Own Stories',
@@ -23,10 +24,14 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-slate-200">
         <ReduxProvider>
-          <VaultsProvider>
-            <Navbar />
-            <div className="m-auto w-full bg-white md:w-[90%]">{children}</div>
-          </VaultsProvider>
+          <StoryProvider>
+            <VaultsProvider>
+              <Navbar />
+              <div className="m-auto w-full bg-white md:w-[90%]">
+                {children}
+              </div>
+            </VaultsProvider>
+          </StoryProvider>
         </ReduxProvider>
       </body>
     </html>
