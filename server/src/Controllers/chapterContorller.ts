@@ -3,7 +3,7 @@ import ChapterModel, { ChapterI } from "../Models/chapterModel";
 import catchAsync from "../utils/catchAsync";
 import AppError from "../utils/appError";
 import { CustomRequest } from "../../typings";
-import StoryModel from "../Models/storyModel";
+import StoryModel, { StoryI } from "../Models/storyModel";
 import { Document } from "mongoose";
 
 // Create Chapter
@@ -120,7 +120,6 @@ export const getChapter = catchAsync(
 );
 
 // Update Chapter
-// TODO: When Update chapter number change numbers between new and old number
 export const updateChapter = catchAsync(
   async (
     req: CustomRequest,
@@ -130,18 +129,39 @@ export const updateChapter = catchAsync(
     const { id } = req.params;
 
     const chapter: ChapterI | null = await ChapterModel.findById(id);
+    const story: StoryI | null = await StoryModel.findById(chapter!.storyId);
 
     if (!chapter) {
-      next(new AppError("No chapter found with that ID", 404));
+      return next(new AppError("No chapter found with that ID", 404));
     }
 
-    if (
-      req.user.role !== "Admin" &&
-      req.user.role !== "Owner" &&
-      chapter!.userId !== req.user.id
-    ) {
-      next(new AppError("You do not have permission to access this", 401));
-    }
+    const storyChapters = await ChapterModel.find({
+      storyId: chapter!.storyId,
+    });
+
+    // Makes chapters before previous chapterNumber and after New chapter number increse 1
+    storyChapters.forEach((chap) => {
+      if (
+        chap.chapterNumber >= req.body.chapterNumber &&
+        chap.chapterNumber < chapter!.chapterNumber &&
+        chap._id !== chapter!._id
+      ) {
+        chap.chapterNumber = chap.chapterNumber + 1;
+        chap.save();
+      }
+    });
+
+    // Makes chapters before current go down 1
+    storyChapters.forEach((chap) => {
+      if (
+        chap.chapterNumber <= req.body.chapterNumber &&
+        chap.chapterNumber > chapter!.chapterNumber &&
+        chap._id !== chapter!._id
+      ) {
+        chap.chapterNumber = chap.chapterNumber - 1;
+        chap.save();
+      }
+    });
 
     const updatedChapter = await ChapterModel.findByIdAndUpdate(
       id,
@@ -151,8 +171,6 @@ export const updateChapter = catchAsync(
         runValidators: true,
       }
     );
-    console.log(chapter);
-    const story = await StoryModel.findById(chapter?.storyId);
 
     let newWordCount = story!.wordAmount - chapter!.wordCount;
     newWordCount = newWordCount + updatedChapter!.wordCount;
@@ -196,10 +214,21 @@ export const deleteChapter = catchAsync(
       );
     }
 
+    const storyChapters = await ChapterModel.find({
+      storyId: chapter!.storyId,
+    });
+
+    storyChapters.forEach((chap) => {
+      if (chap.chapterNumber > Number(chapter?.chapterNumber)) {
+        chap.chapterNumber = chap.chapterNumber - 1;
+        chap.save();
+      }
+    });
+
     const deletedChapter = await ChapterModel.findByIdAndDelete(id);
 
     if (!deletedChapter) {
-      next(new AppError("No chapter found with that ID", 404));
+      return next(new AppError("No chapter found with that ID", 404));
     }
 
     const chapterWordCount = chapter!.wordCount;

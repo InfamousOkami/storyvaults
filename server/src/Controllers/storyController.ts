@@ -40,7 +40,7 @@ export const getAllStories = catchAsync(
       };
     }
 
-    let queryStr = JSON.stringify(queryObj);
+    let queryStr = JSON.stringify({ ...queryObj, active: true });
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
     let query = StoryModel.find(JSON.parse(queryStr)).populate(
@@ -98,10 +98,9 @@ export const getUserStories = catchAsync(
     res: express.Response,
     next: express.NextFunction
   ) => {
-    console.log(req.query);
     const stories = await StoryModel.find({ userId: req.params.id })
       .populate(`languageName genre userId category`)
-      .sort({ [req.query.sort as string]: -1 });
+      .sort({ updatedAt: -1 });
 
     return res.status(200).json({
       status: "Success",
@@ -115,13 +114,31 @@ export const getUserStories = catchAsync(
   }
 );
 
+export const getEditorStories = catchAsync(
+  async (
+    req: CustomRequest,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const stories = await StoryModel.find({ editorId: req.user._id })
+      .populate(`languageName genre userId category`)
+      .sort({ updatedAt: -1 });
+
+    return res.status(200).json({
+      status: "Success",
+      results: stories.length,
+      data: stories,
+    });
+  }
+);
+
 export const getTopThirteenStories = catchAsync(
   async (
     req: express.Request,
     res: express.Response,
     next: express.NextFunction
   ) => {
-    const stories = await StoryModel.find({ nsfw: false })
+    const stories = await StoryModel.find({ nsfw: false, active: true })
       .populate(`languageName genre userId category`)
       .sort({ "ratingsAverage.weeklyCount": -1 })
       .limit(13);
@@ -140,7 +157,11 @@ export const getTopStories = catchAsync(
     next: express.NextFunction
   ) => {
     const { categoryId } = req.params;
-    const stories = await StoryModel.find({ category: categoryId, nsfw: false })
+    const stories = await StoryModel.find({
+      category: categoryId,
+      nsfw: false,
+      active: true,
+    })
       .populate(`languageName genre userId category`)
       .sort({ "ratingsAverage.total": -1 })
       .limit(6);
@@ -164,7 +185,11 @@ export const getTopGenreStories = catchAsync(
     next: express.NextFunction
   ) => {
     const { genreId } = req.params;
-    const stories = await StoryModel.find({ genre: genreId, nsfw: false })
+    const stories = await StoryModel.find({
+      genre: genreId,
+      nsfw: false,
+      active: true,
+    })
       .populate(`languageName genre userId category`)
       .sort({ "ratingsAverage.total": -1 })
       .limit(3);
@@ -186,11 +211,10 @@ export const getTopStoriesScroller = catchAsync(
 
     const searchQuery = `${fieldType}.${timeType}`;
 
-    console.log(searchQuery);
-
     const query: { [key: string]: any } = {
       category: categoryId,
       nsfw: false,
+      active: true,
     };
     query[searchQuery] = { $gt: 0 };
 
@@ -224,9 +248,6 @@ export const getStory = catchAsync(
     let storyQuery = StoryModel.findById(req.params.id);
 
     // Check if editorId exists in the request params
-    if (story?.editorId) {
-      populateFields += " editorId";
-    }
 
     storyQuery = storyQuery?.populate(populateFields);
 
@@ -313,13 +334,11 @@ export const updateStory = catchAsync(
     // TODO: If picture is updated delete old picture and update picure path and name
     const { id } = req.params;
 
-    console.log(req.body);
-
     const story: StoryI | null = await StoryModel.findById(id);
 
     if (story?.picturePath !== req.body.picturePath) {
       fs.unlink(
-        `../../public/assets/${req.user.username}/${story?.picturePath}`,
+        `public/assets/${req.user.username}/${story?.picturePath}`,
         () => console.log("file deleted")
       );
     }
@@ -486,9 +505,6 @@ export const FavoriteStory = catchAsync(
     const story: StoryI | null = await StoryModel.findById(id);
     const user = await UserModel.findById(userId);
 
-    console.log(id);
-    console.log(userId);
-
     const isFavorited = story?.favorites.get(userId);
 
     if (isFavorited) {
@@ -537,6 +553,39 @@ export const FavoriteStory = catchAsync(
   }
 );
 
+export const EditorRequestUpdateStory = catchAsync(
+  async (
+    req: CustomRequest,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const { id } = req.params;
+    const story = await StoryModel.findById(id);
+
+    const updatedStory = await StoryModel.findByIdAndUpdate(
+      id,
+      {
+        editorId:
+          req.body.editorRequestStatus === "Declined" ||
+          req.body.editorRequestStatus === "None"
+            ? null
+            : story?.editorId,
+        editorRequestStatus:
+          req.body.editorRequestStatus === "Declined" ||
+          req.body.editorRequestStatus === "None"
+            ? "None"
+            : "Accepted",
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      status: "Success",
+      data: updatedStory,
+    });
+  }
+);
+
 // Delete User
 export const deleteStory = catchAsync(
   async (
@@ -560,6 +609,13 @@ export const deleteStory = catchAsync(
     ) {
       next(
         new AppError("You do not have permission to update this story", 401)
+      );
+    }
+
+    if (story?.picturePath) {
+      fs.unlink(
+        `public/assets/${req.user.username}/${story?.picturePath}`,
+        () => console.log("file deleted")
       );
     }
 
@@ -639,8 +695,15 @@ export const deactivateStory = catchAsync(
       );
     }
 
+    if (story?.picturePath) {
+      fs.unlink(
+        `../../public/assets/${req.user.username}/${story?.picturePath}`,
+        () => console.log("file deleted")
+      );
+    }
+
     const deactivatedStory = await StoryModel.findByIdAndUpdate(id, {
-      active: !story?.active,
+      active: story?.active ? false : true,
     });
 
     res.status(204).json({

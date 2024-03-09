@@ -3,6 +3,8 @@ import catchAsync from "../utils/catchAsync";
 import AppError from "../utils/appError";
 import { CustomRequest } from "../../typings";
 import VaultModel, { VaultI } from "../Models/vaultModel";
+import validator from "validator";
+import fs from "fs";
 
 // Create Vault
 export const createVault = catchAsync(
@@ -55,8 +57,10 @@ export const getFollowedVaults = catchAsync(
     const userId = req.user._id;
 
     const vaults = await VaultModel.find({
-      $or: [{ userId: userId }, { followers: { $in: [userId] } }],
-    }).populate("userId");
+      $or: [{ userId: userId }, { followers: { $in: [userId.toString()] } }],
+    })
+      .populate("userId")
+      .sort({ updatedAt: -1 });
 
     return res.status(200).json({
       status: "Success",
@@ -91,7 +95,6 @@ export const getVault = catchAsync(
     res: express.Response,
     next: express.NextFunction
   ) => {
-    console.log(req.params);
     const vault = await VaultModel.findById(req.params.id).populate("userId");
 
     if (!vault) {
@@ -124,12 +127,18 @@ export const updateVault = catchAsync(
       next(new AppError("You do not have permission to access this", 401));
     }
 
+    if (vault?.picturePath !== req.body.picturePath) {
+      fs.unlink(
+        `public/assets/${req.user.username}/${vault?.picturePath}`,
+        () => console.log("file deleted")
+      );
+    }
+
     const updatedVault = await VaultModel.findByIdAndUpdate(
       id,
       { ...req.body, updatedAt: Date.now() },
       {
         new: true,
-        runValidators: true,
       }
     );
 
@@ -138,6 +147,88 @@ export const updateVault = catchAsync(
       data: {
         category: updatedVault,
       },
+    });
+  }
+);
+
+export const FollowVault = catchAsync(
+  async (
+    req: CustomRequest,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const { id } = req.params;
+
+    const vault: VaultI | null = await VaultModel.findById(id);
+
+    if (!vault) {
+      next(new AppError("No vault found with that ID", 404));
+    }
+
+    const isFollowed = vault?.followers.includes(req.user._id.toString());
+
+    if (isFollowed) {
+      const newFollowers = vault?.followers.filter(
+        (follower) => follower !== req.user._id.toString()
+      );
+
+      const updatedVault = await VaultModel.findByIdAndUpdate(id, {
+        followers: newFollowers,
+      });
+
+      res.status(200).json({
+        status: "Success",
+        data: updatedVault,
+      });
+    } else {
+      const newFollowers = vault?.followers.concat(req.user._id.toString());
+
+      const updatedVault = await VaultModel.findByIdAndUpdate(id, {
+        followers: newFollowers,
+      });
+
+      res.status(200).json({
+        status: "Success",
+        data: updatedVault,
+      });
+    }
+  }
+);
+
+export const FavoriteVault = catchAsync(
+  async (
+    req: CustomRequest,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const { id } = req.params;
+    const userId = req.user._id;
+
+    const vault: VaultI | null = await VaultModel.findById(id);
+
+    if (!vault) {
+      next(new AppError("No vault found with that ID", 404));
+    }
+
+    const isFavorited = vault?.favorites.get(userId);
+
+    if (isFavorited) {
+      vault!.favorites.delete(userId);
+    } else {
+      vault?.favorites.set(userId, true);
+    }
+
+    const updatedVault = await VaultModel.findByIdAndUpdate(
+      id,
+      {
+        favorites: vault?.favorites,
+      },
+      { new: true }
+    );
+
+    res.status(200).json({
+      status: "Success",
+      data: updatedVault,
     });
   }
 );
@@ -161,6 +252,13 @@ export const deleteVault = catchAsync(
     if (req.user.role !== "Admin" && req.user.role !== "Owner") {
       next(
         new AppError("You do not have permission to update this vault", 401)
+      );
+    }
+
+    if (vault?.picturePath) {
+      fs.unlink(
+        `public/assets/${req.user.username}/${vault?.picturePath}`,
+        () => console.log("file deleted")
       );
     }
 

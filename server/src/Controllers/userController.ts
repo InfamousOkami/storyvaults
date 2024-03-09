@@ -5,6 +5,7 @@ import AppError from "../utils/appError";
 import { CustomRequest } from "../../typings";
 import { externalLinksI } from "../Models/userModel";
 import validator from "validator";
+import fs from "fs";
 
 const filterObj = (obj: any, ...allowedFields: string[]) => {
   const newObj: Record<string, any> = {};
@@ -120,6 +121,13 @@ export const updateMe = catchAsync(
           "Cannot change password using this route, Please use /updateMyPassword.",
           400
         )
+      );
+    }
+
+    if (req.user.picturePath !== req.body.picturePath) {
+      fs.unlink(
+        `public/assets/${req.user.username}/${req.user.picturePath}`,
+        () => console.log("file deleted")
       );
     }
 
