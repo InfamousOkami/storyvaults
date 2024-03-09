@@ -38,9 +38,12 @@ export interface UserI extends Document {
   profileViews: {
     total: number;
     monthlyCount: number;
-    lastUpdated: Date;
+    weeklyCount: number;
+    lastWeekluUpdated: Date;
+    lastMonthlyUpdated: Date;
   };
   active: boolean;
+  views: number;
 
   // Methods
   correctPassword(
@@ -137,7 +140,9 @@ const UserSchema = new mongoose.Schema({
   profileViews: {
     total: { type: Number, default: 0 },
     monthlyCount: { type: Number, default: 0 },
-    lastUpdated: { type: Date, default: Date.now() },
+    weeklyCount: { type: Number, default: 0 },
+    lastMonthlyUpdated: { type: Date, default: Date.now() },
+    lastWeeklyUpdated: { type: Date, default: Date.now() },
   },
   active: {
     type: Boolean,

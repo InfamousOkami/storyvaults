@@ -47,6 +47,13 @@ export interface StoryI extends Document {
     lastMonthUpdated: Date;
     lastWeekUpdated: Date;
   };
+  views: {
+    total: number;
+    monthlyCount: number;
+    weeklyCount: number;
+    lastWeekluUpdated: Date;
+    lastMonthlyUpdated: Date;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -57,6 +64,13 @@ const StorySchema = new mongoose.Schema({
     required: [true, "Your story must have a title"],
     trim: true,
     maxlength: [100, "Your title needs to be less than 100 characters"],
+  },
+  views: {
+    total: { type: Number, default: 0 },
+    monthlyCount: { type: Number, default: 0 },
+    weeklyCount: { type: Number, default: 0 },
+    lastMonthlyUpdated: { type: Date, default: Date.now() },
+    lastWeeklyUpdated: { type: Date, default: Date.now() },
   },
   description: {
     type: String,
@@ -263,12 +277,12 @@ StorySchema.pre("save", function (next) {
   next();
 });
 
-StorySchema.pre(/^find/, function (this: any, next: () => void) {
-  // Current query only finds users that are active
-  this.find({ active: true });
+// StorySchema.pre(/^find/, function (this: any, next: () => void) {
+//   // Current query only finds users that are active
+//   this.find({ active: true });
 
-  next();
-});
+//   next();
+// });
 
 const StoryModel = mongoose.model("StoryModel", StorySchema);
 

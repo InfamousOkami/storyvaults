@@ -12,6 +12,13 @@ export interface ChapterI extends Document {
   updatedAt: Date;
   needEditing: boolean;
   price: number;
+  views: {
+    total: number;
+    monthlyCount: number;
+    weeklyCount: number;
+    lastWeekluUpdated: Date;
+    lastMonthlyUpdated: Date;
+  };
   likes: Map<mongoose.Schema.Types.ObjectId, boolean>;
 }
 
@@ -23,6 +30,13 @@ const ChapterSchema = new mongoose.Schema({
   chapterNumber: {
     type: Number,
     default: 1,
+  },
+  views: {
+    total: { type: Number, default: 0 },
+    monthlyCount: { type: Number, default: 0 },
+    weeklyCount: { type: Number, default: 0 },
+    lastMonthlyUpdated: { type: Date, default: Date.now() },
+    lastWeeklyUpdated: { type: Date, default: Date.now() },
   },
   price: {
     type: Number,
