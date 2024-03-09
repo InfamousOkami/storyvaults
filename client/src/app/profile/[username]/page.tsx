@@ -7,7 +7,7 @@ import axios from 'axios'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-// TODO: create my stories, my vaults, and my editing stories, and settings pages
+// TODO: create settings pages
 
 function Profile() {
   const [user, setUser] = useState<UserI | null>(null)
