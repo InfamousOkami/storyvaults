@@ -92,11 +92,13 @@ function ProfileStories({ user }: { user: UserI }) {
         className="flex w-full flex-col justify-center gap-3 px-1 md:flex-row md:flex-wrap
       "
       >
-        {stories.map((story: StoryI) => (
-          <React.Fragment key={story._id}>
-            <SimpleCard story={story} />
-          </React.Fragment>
-        ))}
+        {stories
+          .filter((s: StoryI) => s.active !== false)
+          .map((story: StoryI) => (
+            <React.Fragment key={story._id}>
+              <SimpleCard story={story} />
+            </React.Fragment>
+          ))}
       </div>
     </div>
   )

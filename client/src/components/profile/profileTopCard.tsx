@@ -133,6 +133,8 @@ function ProfileTopCard({ user }: { user: UserI }) {
     }
   }
 
+  // TODO: add followers, following, and favorited stories, and update profile views
+
   return (
     <div>
       <div className="flex flex-col items-center md:flex-row">
@@ -150,7 +152,7 @@ function ProfileTopCard({ user }: { user: UserI }) {
             />
           </div>
         </div>
-        <div className="flex-2">
+        <div className="flex-2 w-full pt-1">
           {/* Username & Role */}
           <div className="flex items-center justify-center gap-2">
             <h1 className="text-2xl font-medium">{user.username}</h1>
