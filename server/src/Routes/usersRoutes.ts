@@ -26,7 +26,7 @@ router.get("/:id", getUser);
 router.get("/username/:username", getUserByUsernameProfile);
 
 // Patches
-router.patch("/updateMe", isAuthenticated, isOwnerOrAdmin, updateMe);
+
 router.patch("/user/:id", isAuthenticated, isOwnerOrAdmin, updateUser);
 router.patch(
   "/links/:id",

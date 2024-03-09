@@ -2,6 +2,8 @@ import express from "express";
 
 import { isAuthenticated, restricToRoles } from "../middlewares/authMiddleware";
 import {
+  FavoriteVault,
+  FollowVault,
   createVault,
   deleteVault,
   getAllVaults,
@@ -20,7 +22,9 @@ router.get("/vaultStories/:id", getVaultStories);
 router.get("/:id", getVault);
 
 // Patches
-router.patch("/update/:id", isAuthenticated, updateVault);
+
+router.patch("/follow/:id", isAuthenticated, FollowVault);
+router.patch("/favorite/:id", isAuthenticated, FavoriteVault);
 
 // Deletes
 router.delete("/delete/:id", isAuthenticated, deleteVault);
