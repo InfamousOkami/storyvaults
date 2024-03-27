@@ -10,6 +10,8 @@ import {
   updateUser,
   getUserByUsernameProfile,
   updateUserExternalLinks,
+  updateUserViews,
+  FollowUser,
 } from "../Controllers/userController";
 
 import {
@@ -28,6 +30,10 @@ router.get("/username/:username", getUserByUsernameProfile);
 // Patches
 
 router.patch("/user/:id", isAuthenticated, isOwnerOrAdmin, updateUser);
+
+router.patch("/user/views/:id", updateUserViews);
+router.patch("/follow/:id", isAuthenticated, FollowUser);
+
 router.patch(
   "/links/:id",
   isAuthenticated,

@@ -111,7 +111,8 @@ function DetailedVaultCard({ vault }: { vault: VaultI }) {
             className={`h-36 w-24 cursor-pointer overflow-hidden  rounded-lg hover:shadow-lg md:h-80 md:w-56 ${vault.picturePath !== '' ? 'shadow-sm shadow-gray-600 drop-shadow-lg' : 'bg-gray-500 shadow-sm shadow-gray-600 drop-shadow-lg'}`}
           >
             <Image
-              fill
+              width={500}
+              height={500}
               priority={true}
               placeholder="empty"
               src={`http://localhost:8080/assets/${vault.userId.username}/${vault.picturePath}`}

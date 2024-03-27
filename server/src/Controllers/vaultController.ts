@@ -151,6 +151,50 @@ export const updateVault = catchAsync(
   }
 );
 
+export const toggleVault = catchAsync(
+  async (
+    req: CustomRequest,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const { storyId } = req.body;
+    const { id } = req.params;
+
+    const vault: VaultI | null = await VaultModel.findById(id);
+
+    if (!vault) {
+      next(new AppError("No vault found with that ID", 404));
+    }
+
+    const isInVault = vault?.stories.includes(storyId);
+
+    if (isInVault) {
+      const newStoryList = vault?.stories.filter((story) => story !== storyId);
+
+      const updatedVault = await VaultModel.findByIdAndUpdate(id, {
+        stories: newStoryList,
+        updatedAt: Date.now(),
+      });
+
+      res.status(200).json({
+        status: "Success",
+        data: updatedVault,
+      });
+    } else {
+      const newStoryList = vault?.stories.concat(storyId);
+
+      const updatedVault = await VaultModel.findByIdAndUpdate(id, {
+        stories: newStoryList,
+        updatedAt: Date.now(),
+      });
+
+      res.status(200).json({
+        status: "Success",
+        data: updatedVault,
+      });
+    }
+  }
+);
 export const FollowVault = catchAsync(
   async (
     req: CustomRequest,

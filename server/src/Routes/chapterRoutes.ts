@@ -3,12 +3,14 @@ import express from "express";
 import { isAuthenticated, restricToRoles } from "../middlewares/authMiddleware";
 
 import {
+  LikeChapter,
   createChapter,
   deleteChapter,
   getAllChapters,
   getChapter,
   getStoryChapters,
   updateChapter,
+  updateChapterViews,
 } from "../Controllers/chapterContorller";
 
 const router = express.Router();
@@ -28,6 +30,9 @@ router.post(
 
 // Patches
 router.patch("/update/:id", isAuthenticated, updateChapter);
+router.patch("/chapter/views/:id", updateChapterViews);
+
+router.patch("/favorite/:id/", isAuthenticated, LikeChapter);
 
 // Deletes
 router.delete("/delete/:id", isAuthenticated, deleteChapter);

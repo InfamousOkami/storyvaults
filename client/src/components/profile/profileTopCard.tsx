@@ -1,8 +1,15 @@
+'use client'
+
 import { UserI } from '@/typings'
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Breaker from '../breaker/Breaker'
 import Image from 'next/image'
+import axios from 'axios'
+import { useAppSelector } from '@/lib/redux/store'
+import FollowOverlay from './follow/FollowOverlay'
+import FollowButton from './follow/FollowButton'
+import parse from 'html-react-parser'
 
 const GetLinkIcon = (type: string) => {
   switch (type) {
@@ -118,6 +125,12 @@ const GetLinkIcon = (type: string) => {
 }
 
 function ProfileTopCard({ user }: { user: UserI }) {
+  const curUser = useAppSelector((state) => state.auth.user)
+
+  const [activeOverlay, setActiveOverlay] = useState('')
+
+  const isUserFollowed = user.followers.includes(curUser._id)
+
   const getRoleColor = (role: string) => {
     switch (role) {
       case 'Admin':
@@ -133,10 +146,26 @@ function ProfileTopCard({ user }: { user: UserI }) {
     }
   }
 
-  // TODO: add followers, following, and favorited stories, and update profile views
+  const updateUserViews = async () => {
+    await axios.patch(
+      `http://localhost:8080/api/v1/users/user/views/${user._id}`
+    )
+  }
+
+  // Updates Views
+  useEffect(() => {
+    if (user && user._id !== curUser._id) {
+      setTimeout(() => {
+        updateUserViews()
+      }, 5000)
+    }
+  }, [])
 
   return (
-    <div>
+    <div className="relative">
+      <div className="absolute right-5 top-5">
+        <FollowButton following={isUserFollowed} followUserId={user._id} />
+      </div>
       <div className="flex flex-col items-center md:flex-row">
         {/* Profile Picture */}
         <div className="self-center p-2 md:self-start">
@@ -144,7 +173,7 @@ function ProfileTopCard({ user }: { user: UserI }) {
             <Image
               width={5000}
               height={5000}
-              // fill
+              priority
               src={`
                   ${user.picturePath !== 'default.webp' ? `http://localhost:8080/assets/${user.username}/${user.picturePath}` : `http://localhost:8080/assets/${user.picturePath}`}
                   `}
@@ -168,7 +197,7 @@ function ProfileTopCard({ user }: { user: UserI }) {
             {/* Bio */}
             <h2 className="text-center text-xl font-medium underline">Bio</h2>
             <p className="w-full border-x border-gray-200 px-2 py-1  text-base leading-5 md:text-lg">
-              {user.bio}
+              {parse(user.bio)}
             </p>
           </div>
         </div>
@@ -176,10 +205,25 @@ function ProfileTopCard({ user }: { user: UserI }) {
 
       {/* User Stats */}
       <div className="flex flex-wrap justify-center gap-1 bg-gray-100 p-2 text-sm">
-        {/* TODO: Create Portal for followers and Followings webdebsimplified */}
-        <p>Followers: {user.followers.length}</p>
+        <p>
+          Followers:{' '}
+          <span
+            className="cursor-pointer text-blue-500 hover:text-blue-600"
+            onClick={() => setActiveOverlay('followers')}
+          >
+            {user.followers.length}
+          </span>
+        </p>
         <Breaker type="between" />
-        <p>Following: {user.following.length}</p>
+        <p>
+          Following:{' '}
+          <span
+            className="cursor-pointer text-blue-500 hover:text-blue-600"
+            onClick={() => setActiveOverlay('following')}
+          >
+            {user.following.length}
+          </span>
+        </p>
         <Breaker type="between" />
         <p>Favorited Stories: {user.favoritedStories.length}</p>
         <Breaker type="between" />
@@ -211,6 +255,16 @@ function ProfileTopCard({ user }: { user: UserI }) {
             ))}
           </div>
         </div>
+      )}
+
+      {activeOverlay !== '' && (
+        <FollowOverlay
+          followList={
+            activeOverlay === 'followers' ? user.followers : user.following
+          }
+          close={setActiveOverlay}
+          type={activeOverlay}
+        />
       )}
     </div>
   )

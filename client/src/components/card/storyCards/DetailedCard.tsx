@@ -9,9 +9,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useDispatch } from 'react-redux'
 import { setBookmarks } from '@/lib/redux/features/auth-slice'
+import AddVaultButton from '@/components/buttons/AddVaultButton'
 
 // TODO: Rating
-// TODO: Add to vault
 
 function DetailedCard({ story }: { story: StoryI }) {
   const token = useAppSelector((state) => state.auth.token)
@@ -77,7 +77,7 @@ function DetailedCard({ story }: { story: StoryI }) {
       }
     )
 
-    if (bookmark.data.data.length > 0) {
+    if (bookmark.data.data) {
       setIsBookmarked(true)
     }
   }
@@ -171,252 +171,259 @@ function DetailedCard({ story }: { story: StoryI }) {
   }, [favoriteAvailible, BookmarkAvailible])
 
   return (
-    <div className="rounded-lg border  border-gray-200 bg-gray-100">
-      <div className="m-1 flex gap-2 p-1">
-        {/* Left flex - Image */}
-        <div className=" flex-1 ">
-          <div
-            className={`h-36 w-24 cursor-pointer rounded-lg ${story.picturePath !== '' ? 'shadow-sm shadow-gray-600 drop-shadow-lg' : 'bg-gray-500 shadow-sm shadow-gray-600 drop-shadow-lg'} overflow-hidden hover:shadow-lg md:h-80 md:w-56`}
-          >
-            <Image
-              width={5000}
-              height={5000}
-              priority={true}
-              placeholder="empty"
-              src={`http://localhost:8080/assets/${story.userId.username}/${story.picturePath}`}
-              alt={story.picturePath ? story.picturePath : story.title}
-            />
-          </div>
-        </div>
-
-        {/* Right Flex - title, username, description */}
-        <div className="flex-2 relative w-full self-start">
-          {/* Title & Username */}
-          <div className="text-md flex gap-2 md:text-lg">
-            <Link href={`/story/${story._id}/${story.slug}`}>
-              <h1 className=" mb-1 text-xl font-semibold underline hover:text-gray-500">
-                {story.title}
-              </h1>
-            </Link>
-
-            <Link
-              className="flex gap-1"
-              href={`/profile/${story.userId.username}`}
+    <div className="relative">
+      <div className="rounded-lg border  border-gray-200 bg-gray-100">
+        <div className="m-1 flex gap-2 p-1">
+          {/* Left flex - Image */}
+          <div className=" flex-1 ">
+            <div
+              className={`h-36 w-24 cursor-pointer rounded-lg ${story.picturePath !== '' ? 'shadow-sm shadow-gray-600 drop-shadow-lg' : 'bg-gray-500 shadow-sm shadow-gray-600 drop-shadow-lg'} overflow-hidden hover:shadow-lg md:h-80 md:w-56`}
             >
-              <p>By:</p>
-              <p className="text-blue-700">{story.userId.username}</p>
-            </Link>
+              <Image
+                width={5000}
+                height={5000}
+                priority={true}
+                placeholder="empty"
+                src={`http://localhost:8080/assets/${story.userId.username}/${story.picturePath}`}
+                alt={story.picturePath ? story.picturePath : story.title}
+              />
+            </div>
           </div>
 
-          {/* Description */}
-          <div className="border-x border-gray-200 px-2">
-            <p className="text-xs md:text-lg md:leading-6">
-              {story.description}
-            </p>
-          </div>
+          {/* Right Flex - title, username, description */}
+          <div className="flex-2 relative w-full self-start">
+            {/* Title & Username */}
+            <div className="text-md flex gap-2 md:text-lg">
+              <Link href={`/story/${story._id}/${story.slug}`}>
+                <h1 className=" mb-1 text-xl font-semibold underline hover:text-gray-500">
+                  {story.title}
+                </h1>
+              </Link>
 
-          {/* NSFW */}
-          {story.nsfw && (
-            <div className="absolute right-0 top-0 ">
-              <p className="rounded-lg bg-red-500 px-2 py-1 text-lg text-white">
-                NSFW
+              <Link
+                className="flex gap-1"
+                href={`/profile/${story.userId.username}`}
+              >
+                <p>By:</p>
+                <p className="text-blue-700">{story.userId.username}</p>
+              </Link>
+            </div>
+
+            {/* Description */}
+            <div className="border-x border-gray-200 px-2">
+              <p className="text-xs md:text-lg md:leading-6">
+                {story.description}
               </p>
             </div>
-          )}
-        </div>
-      </div>
 
-      {/* Bottom flex - Information */}
-      <div className="flex justify-between gap-1 bg-gray-200">
-        <div className=" flex flex-wrap items-center gap-[.2rem] rounded-lg p-2 text-xs leading-3 text-gray-800 md:gap-[.4rem] md:text-sm">
-          {/* Status */}
-          <p>
-            Status:
-            <span> {story.status}</span>
-          </p>
-          <Breaker type="between" />
-
-          {/* Genre */}
-          <p>{story.genre.name}</p>
-          <Breaker type="between" />
-
-          {/* Category */}
-          <p>{getCategoryName(story.category.name)}</p>
-          <Breaker type="between" />
-
-          {/* Language */}
-          <p> {story.languageName.name}</p>
-          <Breaker type="between" />
-
-          {/* Chapter Amount */}
-          <p>
-            Chapters:
-            <span> {story.chapterAmount}</span>
-          </p>
-          <Breaker type="between" />
-
-          {/* WordCount */}
-          <p>
-            Wordcount:
-            <span> {story.wordAmount}</span>
-          </p>
-          <Breaker type="between" />
-
-          {/* Favorites */}
-          <p>
-            Favorites:
-            <span> {favoriteAmount}</span>
-          </p>
-          <Breaker type="between" />
-
-          {/* Bookmark Amount  */}
-          <p>
-            Bookmarks:
-            <span> {bookamrkAmount}</span>
-          </p>
-          <Breaker type="between" />
-
-          {/* Comment Amount */}
-          <p>
-            Comments:
-            <span> {story.commentAmount}</span>
-          </p>
-          <Breaker type="between" />
-
-          {/* Rating */}
-          <p>
-            Rating:
-            <span> {story.ratingsAverage.total}</span>
-          </p>
-          <Breaker type="between" />
-
-          {/* Updated At */}
-          <p>
-            Updated:
-            {/*@ts-ignore*/}
-            <span> {story.updatedAt}</span>
-          </p>
-          <Breaker type="between" />
-
-          {/* Created At */}
-          <p>
-            Created:
-            {/*@ts-ignore*/}
-            <span> {story.createdAt}</span>
-          </p>
-        </div>
-
-        {/* Buttons */}
-        <div className="flex flex-col gap-1 min-[1110px]:flex-row">
-          <div className="flex gap-1 self-end">
-            {/* Favorite Button */}
-            <div
-              className=" cursor-pointer rounded-lg p-1 text-center text-white"
-              onClick={() => {
-                setFavoriteAvailible(false)
-                PatchFavorite()
-              }}
-            >
-              {/* Price */}
-              {isFavorited ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon icon-tabler icon-tabler-heart-filled text-red-600 hover:text-red-700"
-                  width="48"
-                  height="48"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <path
-                    d="M6.979 3.074a6 6 0 0 1 4.988 1.425l.037 .033l.034 -.03a6 6 0 0 1 4.733 -1.44l.246 .036a6 6 0 0 1 3.364 10.008l-.18 .185l-.048 .041l-7.45 7.379a1 1 0 0 1 -1.313 .082l-.094 -.082l-7.493 -7.422a6 6 0 0 1 3.176 -10.215z"
-                    strokeWidth="0"
-                    fill="currentColor"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon icon-tabler icon-tabler-heart text-red-600 hover:text-red-700"
-                  width="48"
-                  height="48"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" />
-                </svg>
-              )}
-            </div>
-
-            {/* Bookmark Button */}
-            <div
-              className=" cursor-pointer rounded-lg p-1 text-center text-white "
-              onClick={() => {
-                setBookmarkAvailible(false)
-                toggleBookmark()
-              }}
-            >
-              {/* bookmark */}
-              {isBookmarked ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon icon-tabler icon-tabler-bookmark-filled text-blue-500 hover:text-blue-600"
-                  width="48"
-                  height="48"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <path
-                    d="M14 2a5 5 0 0 1 5 5v14a1 1 0 0 1 -1.555 .832l-5.445 -3.63l-5.444 3.63a1 1 0 0 1 -1.55 -.72l-.006 -.112v-14a5 5 0 0 1 5 -5h4z"
-                    strokeWidth="0"
-                    fill="currentColor"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon icon-tabler icon-tabler-bookmark text-blue-500 hover:text-blue-600"
-                  width="48"
-                  height="48"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <path d="M18 7v14l-6 -4l-6 4v-14a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4z" />
-                </svg>
-              )}
-            </div>
+            {/* NSFW */}
+            {story.nsfw && (
+              <div className="absolute right-0 top-0 ">
+                <p className="rounded-lg bg-red-500 px-2 py-1 text-lg text-white">
+                  NSFW
+                </p>
+              </div>
+            )}
           </div>
+        </div>
 
-          {/* Pay Button */}
-          <div className="w-52 cursor-pointer rounded-lg bg-green-500 p-1 text-center text-white hover:bg-green-600">
-            {/* Price */}
-            <p className="">{getStoryPrice(story.readerAccess).type}:</p>
-            <p className="text-xl font-bold">
-              {story.readerAccess !== 'free' && '$'}
-              {getStoryPrice(story.readerAccess).amount}
+        {/* Bottom flex - Information */}
+        <div className="flex justify-between gap-1 bg-gray-200">
+          <div className=" flex flex-wrap items-center gap-[.2rem] rounded-lg p-2 text-xs leading-3 text-gray-800 md:gap-[.4rem] md:text-sm">
+            {/* Status */}
+            <p>
+              Status:
+              <span> {story.status}</span>
+            </p>
+            <Breaker type="between" />
+
+            {/* Genre */}
+            <p>{story.genre.name}</p>
+            <Breaker type="between" />
+
+            {/* Category */}
+            <p>{getCategoryName(story.category.name)}</p>
+            <Breaker type="between" />
+
+            {/* Language */}
+            <p> {story.languageName.name}</p>
+            <Breaker type="between" />
+
+            {/* Chapter Amount */}
+            <p>
+              Chapters:
+              <span> {story.chapterAmount}</span>
+            </p>
+            <Breaker type="between" />
+
+            {/* WordCount */}
+            <p>
+              Wordcount:
+              <span> {story.wordAmount}</span>
+            </p>
+            <Breaker type="between" />
+
+            {/* Favorites */}
+            <p>
+              Favorites:
+              <span> {favoriteAmount}</span>
+            </p>
+            <Breaker type="between" />
+
+            {/* Bookmark Amount  */}
+            <p>
+              Bookmarks:
+              <span> {bookamrkAmount}</span>
+            </p>
+            <Breaker type="between" />
+
+            {/* Comment Amount */}
+            <p>
+              Comments:
+              <span> {story.commentAmount}</span>
+            </p>
+            <Breaker type="between" />
+
+            {/* Rating */}
+            <p>
+              Rating:
+              <span> {story.ratingsAverage.total}</span>
+            </p>
+            <Breaker type="between" />
+
+            {/* Updated At */}
+            <p>
+              Updated:
+              {/*@ts-ignore*/}
+              <span> {story.updatedAt}</span>
+            </p>
+            <Breaker type="between" />
+
+            {/* Created At */}
+            <p>
+              Created:
+              {/*@ts-ignore*/}
+              <span> {story.createdAt}</span>
             </p>
           </div>
+
+          {/* Buttons */}
+          <div className="flex flex-col gap-1 min-[1110px]:flex-row">
+            <div className="flex gap-1 self-end">
+              {/* Favorite Button */}
+              <div
+                className=" cursor-pointer rounded-lg p-1 text-center text-white"
+                onClick={() => {
+                  setFavoriteAvailible(false)
+                  PatchFavorite()
+                }}
+              >
+                {/* Price */}
+                {isFavorited ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="icon icon-tabler icon-tabler-heart-filled text-red-600 hover:text-red-700"
+                    width="48"
+                    height="48"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M6.979 3.074a6 6 0 0 1 4.988 1.425l.037 .033l.034 -.03a6 6 0 0 1 4.733 -1.44l.246 .036a6 6 0 0 1 3.364 10.008l-.18 .185l-.048 .041l-7.45 7.379a1 1 0 0 1 -1.313 .082l-.094 -.082l-7.493 -7.422a6 6 0 0 1 3.176 -10.215z"
+                      strokeWidth="0"
+                      fill="currentColor"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="icon icon-tabler icon-tabler-heart text-red-600 hover:text-red-700"
+                    width="48"
+                    height="48"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" />
+                  </svg>
+                )}
+              </div>
+
+              {/* Bookmark Button */}
+              <div
+                className=" cursor-pointer rounded-lg p-1 text-center text-white "
+                onClick={() => {
+                  setBookmarkAvailible(false)
+                  toggleBookmark()
+                }}
+              >
+                {/* bookmark */}
+                {isBookmarked ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="icon icon-tabler icon-tabler-bookmark-filled text-blue-500 hover:text-blue-600"
+                    width="48"
+                    height="48"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path
+                      d="M14 2a5 5 0 0 1 5 5v14a1 1 0 0 1 -1.555 .832l-5.445 -3.63l-5.444 3.63a1 1 0 0 1 -1.55 -.72l-.006 -.112v-14a5 5 0 0 1 5 -5h4z"
+                      strokeWidth="0"
+                      fill="currentColor"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="icon icon-tabler icon-tabler-bookmark text-blue-500 hover:text-blue-600"
+                    width="48"
+                    height="48"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M18 7v14l-6 -4l-6 4v-14a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4z" />
+                  </svg>
+                )}
+              </div>
+            </div>
+
+            {/* Pay Button */}
+            <div className="w-52 cursor-pointer rounded-lg bg-green-500 p-1 text-center text-white hover:bg-green-600">
+              {/* Price */}
+              <p className="">{getStoryPrice(story.readerAccess).type}:</p>
+              <p className="text-xl font-bold">
+                {story.readerAccess !== 'free' && '$'}
+                {getStoryPrice(story.readerAccess).amount}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
+      {token && (
+        <div className="absolute right-5 top-5">
+          <AddVaultButton storyId={story._id} />
+        </div>
+      )}
     </div>
   )
 }

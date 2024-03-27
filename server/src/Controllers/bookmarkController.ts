@@ -104,7 +104,7 @@ export const getBookmark = catchAsync(
 
     return res.status(200).json({
       status: "Success",
-      data: bookamrk,
+      data: bookamrk[0],
     });
   }
 );

@@ -6,8 +6,6 @@ import { useFormik } from 'formik'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-// TODO: Add better text editor for bio in settings
-
 function SignUpForm() {
   const router = useRouter()
 

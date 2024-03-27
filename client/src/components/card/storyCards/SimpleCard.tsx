@@ -91,7 +91,7 @@ function SimpleCard({ story }: { story: StoryI }) {
       }
     )
 
-    if (bookmark.data.data.length > 0) {
+    if (bookmark.data.data) {
       setIsBookmarked(true)
     }
   }

@@ -8,8 +8,7 @@ import { ChapterI, StoryI } from '@/typings'
 import LoadingPulse from '../loading/LoadingSpinner'
 import * as yup from 'yup'
 import { useFormik } from 'formik'
-
-// TODO: Add better text editor for content
+import WangTextEditror from './WangTextEditror'
 
 function ChapterForm({ type }: { type: string }) {
   const router = useRouter()
@@ -23,6 +22,14 @@ function ChapterForm({ type }: { type: string }) {
   const [chapter, setChapter] = useState<ChapterI | null>(null)
   const [story, setStory] = useState<StoryI | null>(null)
   const [Error, setError] = useState<string>('')
+
+  const [html, setHtml] = useState('')
+  const [contentText, setContentText] = useState('')
+
+  useEffect(() => {
+    setFieldValue('chapterContent', html)
+    setFieldValue('wordCount', contentText.trim().split(/\s+/).length)
+  }, [html, contentText])
 
   const getChapter = async (storyId: string, chapterNumber: string) => {
     try {
@@ -67,7 +74,7 @@ function ChapterForm({ type }: { type: string }) {
       .string()
       .required('Must have a title')
       .max(100, 'Must be under 100 characters'),
-    chapterContent: yup.string().required('Contet is required'),
+    chapterContent: yup.string().required('Content is required'),
     chapterNumber: yup.number().required('WordCount is required'),
     wordCount: yup.number(),
   })
@@ -220,7 +227,7 @@ function ChapterForm({ type }: { type: string }) {
         <div className="flex w-full flex-col items-center">
           <div className="flex w-full flex-col">
             <label>Content: </label>
-            <textarea
+            {/* <textarea
               className={`w-full rounded-lg border border-gray-300 p-1 ${errors.chapterContent && Boolean(touched.chapterContent) ? 'border-4 border-red-500 ' : ''}`}
               id="chapterContent"
               onChange={(e) => {
@@ -232,6 +239,11 @@ function ChapterForm({ type }: { type: string }) {
               }}
               value={values.chapterContent}
               name="chapterContent"
+            /> */}
+            <WangTextEditror
+              html={values.chapterContent}
+              setHtml={setHtml}
+              setText={setContentText}
             />
           </div>
           {errors.chapterContent && Boolean(touched.chapterContent) && (

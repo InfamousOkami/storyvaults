@@ -16,7 +16,7 @@ export interface ChapterI extends Document {
     total: number;
     monthlyCount: number;
     weeklyCount: number;
-    lastWeekluUpdated: Date;
+    lastWeeklyUpdated: Date;
     lastMonthlyUpdated: Date;
   };
   likes: Map<mongoose.Schema.Types.ObjectId, boolean>;

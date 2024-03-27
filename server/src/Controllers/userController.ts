@@ -1,5 +1,5 @@
 import express from "express";
-import { UserModel } from "../Models/userModel";
+import { UserI, UserModel } from "../Models/userModel";
 import catchAsync from "../utils/catchAsync";
 import AppError from "../utils/appError";
 import { CustomRequest } from "../../typings";
@@ -69,14 +69,12 @@ export const getUser = catchAsync(
     const user = await UserModel.findById(req.params.id);
 
     if (!user) {
-      next(new AppError("No user found with that ID", 404));
+      return next(new AppError("No user found with that ID", 404));
     }
 
     return res.status(200).json({
       status: "Success",
-      data: {
-        user,
-      },
+      data: user,
     });
   }
 );
@@ -107,6 +105,58 @@ export const getUserByUsernameProfile = catchAsync(
   }
 );
 
+export const FollowUser = catchAsync(
+  async (
+    req: CustomRequest,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const { id } = req.params;
+    const LoggedInUserId = req.user._id;
+    const TargetUser = await UserModel.findById(id);
+    const LoggedInUser = await UserModel.findById(LoggedInUserId);
+
+    const isFollowing = TargetUser?.followers.includes(LoggedInUserId);
+
+    let LoggedInFollowing = LoggedInUser!.following;
+    let TargetFollowers = TargetUser!.followers;
+
+    if (isFollowing) {
+      TargetFollowers = TargetFollowers.filter(
+        (userId) => userId.toString() !== LoggedInUserId.toString()
+      );
+
+      LoggedInFollowing = LoggedInFollowing.filter(
+        (userId) => userId.toString() !== TargetUser!._id.toString()
+      );
+    } else {
+      TargetFollowers = [LoggedInUserId.toString(), ...TargetUser!.followers];
+
+      LoggedInFollowing = [
+        TargetUser!._id.toString(),
+        ...LoggedInUser!.following,
+      ];
+    }
+
+    await UserModel.findByIdAndUpdate(
+      id,
+      { followers: TargetFollowers },
+      { new: true, runValidators: false }
+    );
+
+    await UserModel.findByIdAndUpdate(
+      LoggedInUserId,
+      { following: LoggedInFollowing },
+      { new: true, runValidators: false }
+    );
+
+    res.status(200).json({
+      status: "Success",
+      data: null,
+    });
+  }
+);
+
 // Update User
 export const updateMe = catchAsync(
   async (
@@ -132,7 +182,16 @@ export const updateMe = catchAsync(
     }
 
     // 2. Update user document
-    const filteredBody = filterObj(req.body, "email", "username", "bio");
+    const filteredBody = filterObj(
+      req.body,
+      "bio",
+      "role",
+      "adultContent",
+      "language",
+      "tosAccepted",
+      "externalLinks",
+      "picturePath"
+    );
 
     const updatedUser = await UserModel.findByIdAndUpdate(
       req.user.id,
@@ -145,9 +204,7 @@ export const updateMe = catchAsync(
 
     res.status(200).json({
       status: "Success",
-      data: {
-        user: updatedUser,
-      },
+      data: updatedUser,
     });
   }
 );
@@ -176,6 +233,44 @@ export const updateUser = catchAsync(
     await user!.save();
 
     return res.status(200).json(user).end();
+  }
+);
+
+export const updateUserViews = catchAsync(
+  async (
+    req: CustomRequest,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const { id } = req.params;
+
+    const user: UserI | null = await UserModel.findById(id);
+
+    if (!user) {
+      return next(new AppError("No user found with that ID", 404));
+    }
+
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      id,
+      {
+        $inc: {
+          "profileViews.total": 1,
+          "profileViews.weeklyCount": 1,
+          "profileViews.monthlyCount": 1,
+        },
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    res.status(200).json({
+      status: "Success",
+      data: {
+        story: updatedUser,
+      },
+    });
   }
 );
 

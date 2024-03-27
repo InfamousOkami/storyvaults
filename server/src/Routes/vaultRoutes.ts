@@ -10,6 +10,7 @@ import {
   getFollowedVaults,
   getVault,
   getVaultStories,
+  toggleVault,
   updateVault,
 } from "../Controllers/vaultController";
 
@@ -24,6 +25,7 @@ router.get("/:id", getVault);
 // Patches
 
 router.patch("/follow/:id", isAuthenticated, FollowVault);
+router.patch("/stories/toggle/:id", isAuthenticated, toggleVault);
 router.patch("/favorite/:id", isAuthenticated, FavoriteVault);
 
 // Deletes

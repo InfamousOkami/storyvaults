@@ -58,7 +58,7 @@ export interface StoryI extends Document {
     total: number
     monthlyCount: number
     weeklyCount: number
-    lastWeekluUpdated: Date
+    lastWeeklyUpdated: Date
     lastMonthlyUpdated: Date
   }
   active: boolean
@@ -134,7 +134,7 @@ export interface ChapterI extends Document {
     total: number
     monthlyCount: number
     weeklyCount: number
-    lastWeekluUpdated: Date
+    lastWeeklyUpdated: Date
     lastMonthlyUpdated: Date
   }
   chapterNumber: number

@@ -331,7 +331,6 @@ export const updateStory = catchAsync(
     res: express.Response,
     next: express.NextFunction
   ) => {
-    // TODO: If picture is updated delete old picture and update picure path and name
     const { id } = req.params;
 
     const story: StoryI | null = await StoryModel.findById(id);
@@ -346,17 +345,12 @@ export const updateStory = catchAsync(
     const oldCategoryName = await CategoryModel.findById(story?.category);
 
     if (!story) {
-      next(new AppError("No story found with that ID", 404));
+      return next(new AppError("No story found with that ID", 404));
     }
 
     // check if owner or editor
-    if (
-      req.user.id != story?.userId &&
-      req.user.id != story?.editorId &&
-      req.user.role !== "Admin" &&
-      req.user.role !== "Owner"
-    ) {
-      next(
+    if (req.user.id != story?.userId || req.user.id != story?.editorId) {
+      return next(
         new AppError("You do not have permission to update this story", 401)
       );
     }
@@ -484,6 +478,44 @@ export const updateStory = catchAsync(
 
       await GenreModel.findByIdAndUpdate(newGenre?.id, updateNewQuery);
     }
+
+    res.status(200).json({
+      status: "Success",
+      data: {
+        story: updatedStory,
+      },
+    });
+  }
+);
+
+export const updateStoryViews = catchAsync(
+  async (
+    req: CustomRequest,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const { id } = req.params;
+
+    const story: StoryI | null = await StoryModel.findById(id);
+
+    if (!story) {
+      return next(new AppError("No story found with that ID", 404));
+    }
+
+    const updatedStory = await StoryModel.findByIdAndUpdate(
+      id,
+      {
+        $inc: {
+          "views.total": 1,
+          "views.weeklyCount": 1,
+          "views.monthlyCount": 1,
+        },
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).populate(`category languageName genre userId`);
 
     res.status(200).json({
       status: "Success",

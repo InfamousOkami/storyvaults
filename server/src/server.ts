@@ -47,6 +47,8 @@ const app = express();
 
 app.use(
   cors({
+    origin: ["https://storyvaults-server.vercel.app"],
+    methods: ["get", "post"],
     credentials: true,
   })
 );
@@ -123,7 +125,6 @@ mongoose.connection.on("uncaughtException", (error: Error) => {
 
 app.use("/assets", express.static(path.join(__dirname, "../public/assets")));
 
-// TODO make model and controller for user photos
 // Routes
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/auth", authRoutes);
@@ -172,7 +173,7 @@ app.post(
 
 // Update With Pictures
 app.patch(
-  "/updateMe",
+  "/api/v1/users/updateMe",
   isAuthenticated,
   isOwnerOrAdmin,
   upload.single("picture"),

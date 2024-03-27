@@ -53,8 +53,6 @@ const initialState = {
   bookmarks: [],
 } as InitialStateT
 
-// TODO: Add User stories, editor stories using useContext
-
 export const auth = createSlice({
   name: 'auth',
   initialState,
@@ -96,6 +94,28 @@ export const auth = createSlice({
       }
     },
 
+    setUserSettings: (
+      state,
+      action: PayloadAction<{
+        user: UserI
+      }>
+    ) => {
+      const { user } = action.payload
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          bio: user.bio,
+          role: user.role,
+          language: user.language,
+          // externalLinks: user.externalLinks,
+          theme: user.theme,
+          adultContent: user.adultContent,
+          tosAccepted: user.tosAccepted,
+        },
+      }
+    },
+
     setBookmarks: (
       state,
       action: PayloadAction<{
@@ -108,8 +128,25 @@ export const auth = createSlice({
         bookmarks: bookmarks,
       }
     },
+
+    setFollowing: (
+      state,
+      action: PayloadAction<{
+        following: any
+      }>
+    ) => {
+      const { following } = action.payload
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          following: following,
+        },
+      }
+    },
   },
 })
 
-export const { logIn, logOut, setBookmarks } = auth.actions
+export const { logIn, logOut, setUserSettings, setBookmarks, setFollowing } =
+  auth.actions
 export default auth.reducer

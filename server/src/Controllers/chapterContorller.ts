@@ -5,6 +5,7 @@ import AppError from "../utils/appError";
 import { CustomRequest } from "../../typings";
 import StoryModel, { StoryI } from "../Models/storyModel";
 import { Document } from "mongoose";
+import { UserModel } from "../Models/userModel";
 
 // Create Chapter
 export const createChapter = catchAsync(
@@ -188,6 +189,80 @@ export const updateChapter = catchAsync(
   }
 );
 
+export const updateChapterViews = catchAsync(
+  async (
+    req: CustomRequest,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const { id } = req.params;
+
+    const chapter: ChapterI | null = await ChapterModel.findById(id);
+
+    if (!chapter) {
+      return next(new AppError("No chapter found with that ID", 404));
+    }
+
+    const updatedChapter = await ChapterModel.findByIdAndUpdate(
+      id,
+      {
+        $inc: {
+          "views.total": 1,
+          "views.weeklyCount": 1,
+          "views.monthlyCount": 1,
+        },
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).populate(`storyId`);
+
+    res.status(200).json({
+      status: "Success",
+      data: {
+        story: updatedChapter,
+      },
+    });
+  }
+);
+
+export const LikeChapter = catchAsync(
+  async (
+    req: CustomRequest,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const { id } = req.params;
+    const userId = req.user._id;
+    const chapter: ChapterI | null = await ChapterModel.findById(id);
+    const user = await UserModel.findById(userId);
+
+    const isLiked = chapter?.likes.get(userId);
+
+    if (isLiked) {
+      chapter!.likes.delete(userId);
+    } else {
+      chapter?.likes.set(userId, true);
+    }
+
+    const updatedChapter = await ChapterModel.findByIdAndUpdate(
+      id,
+      {
+        likes: chapter?.likes,
+      },
+      { new: true }
+    );
+
+    user!.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+      status: "Success",
+      data: updatedChapter,
+    });
+  }
+);
+
 // Delete Chapter
 export const deleteChapter = catchAsync(
   async (
@@ -232,7 +307,7 @@ export const deleteChapter = catchAsync(
     }
 
     const chapterWordCount = chapter!.wordCount;
-    await StoryModel.findByIdAndUpdate(chapter!.storyId, {
+    await ChapterModel.findByIdAndUpdate(chapter!.storyId, {
       $inc: { chapterAmount: -1, wordAmount: -chapterWordCount },
     });
 

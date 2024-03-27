@@ -51,7 +51,7 @@ export interface StoryI extends Document {
     total: number;
     monthlyCount: number;
     weeklyCount: number;
-    lastWeekluUpdated: Date;
+    lastWeeklyUpdated: Date;
     lastMonthlyUpdated: Date;
   };
   createdAt: Date;

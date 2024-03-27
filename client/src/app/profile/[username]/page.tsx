@@ -7,8 +7,6 @@ import axios from 'axios'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-// TODO: create settings pages
-
 function Profile() {
   const [user, setUser] = useState<UserI | null>(null)
   const [isLoading, setIsLoading] = useState(true)

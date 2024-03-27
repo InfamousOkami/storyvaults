@@ -17,6 +17,7 @@ import {
   getTopThirteenStories,
   getUserStories,
   updateStory,
+  updateStoryViews,
 } from "../Controllers/storyController";
 
 const router = express.Router();
@@ -31,9 +32,11 @@ router.get("/top/thirteen/all", getTopThirteenStories);
 router.get("/top/:fieldType/:timeType/:categoryId", getTopStoriesScroller);
 router.get("/:id", getStory);
 
+// Updates
 router.patch("/:id/favorite", isAuthenticated, FavoriteStory);
 router.patch("/editor/update/:id", isAuthenticated, EditorRequestUpdateStory);
 router.patch("/deactivate/:id", isAuthenticated, deactivateStory);
+router.patch("/story/views/:id", updateStoryViews);
 
 // Deletes
 router.delete("/delete/:id", isAuthenticated, deleteStory);
